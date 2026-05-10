@@ -1213,11 +1213,11 @@ function openCategory(cat) {
   items.forEach(function(p) {
     var div = document.createElement('div');
     div.className = 'song-item';
-    var isEng = window.learningLang === 'english';
-    var primaryText = p.english;
-    var secondaryText = isEng ? p.khmer : p.phonetic;
-    var badgeChar = isEng ? p.english.charAt(0) : p.khmer.charAt(0);
-    div.innerHTML = '<div class="song-item-header"><div class="song-badge badge-kids" style="background:var(--yellow);font-size:14px;width:38px;height:38px;font-family:Khmer,sans-serif;">' + badgeChar + '</div><div><div class="song-info-title">' + primaryText + '</div><div class="song-info-sub">' + secondaryText + '</div></div><div class="song-arrow">▶</div></div>';
+    var catIcons = {greetings:'👋',food:'🍜',transport:'🛺',social:'💬',numbers:'🔢',days:'📅',colours:'🎨'};
+    var catColors = {greetings:'#FFD600',food:'#FF8F00',transport:'#1565C0',social:'#2E7D32',numbers:'#6A1B9A',days:'#00838F',colours:'#AD1457'};
+    var icon = catIcons[cat] || '🔊';
+    var color = catColors[cat] || '#1565C0';
+    div.innerHTML = '<div class="song-item-header"><div class="song-badge" style="background:' + color + ';font-size:20px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">' + icon + '</div><div><div class="song-info-title">' + p.english + '</div></div><div class="song-arrow">▶</div></div>';
     div.onclick = (function(phrase) { return function() { openPhrase(phrase); }; })(p);
     list.appendChild(div);
   });
