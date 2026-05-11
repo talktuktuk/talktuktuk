@@ -1217,7 +1217,8 @@ function openCategory(cat) {
     var catColors = {greetings:'#FFD600',food:'#FF8F00',transport:'#1565C0',social:'#2E7D32',numbers:'#6A1B9A',days:'#00838F',colours:'#AD1457'};
     var icon = catIcons[cat] || '🔊';
     var color = catColors[cat] || '#1565C0';
-    div.innerHTML = '<div class="song-item-header"><div class="song-badge" style="background:' + color + ';font-size:20px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">' + icon + '</div><div><div class="song-info-title">' + p.english + '</div></div><div class="song-arrow">▶</div></div>';
+    var khmerText = p.khmer ? '<div style="font-size:12px;color:var(--muted);margin-top:2px;font-family:Khmer,sans-serif;">' + p.khmer + '</div>' : '';
+    div.innerHTML = '<div class="song-item-header"><div class="song-badge" style="background:' + color + ';font-size:20px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">' + icon + '</div><div><div class="song-info-title">' + p.english + '</div>' + khmerText + '</div><div class="song-arrow">▶</div></div>';
     div.onclick = (function(phrase) { return function() { openPhrase(phrase); }; })(p);
     list.appendChild(div);
   });
