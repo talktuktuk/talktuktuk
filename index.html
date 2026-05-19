@@ -882,7 +882,7 @@ function showMain(tab) {
   if (kidsPlayer) kidsPlayer.pauseVideo();
 
 
-  var tabs = ['phrases','quiz','about'];
+var tabs = ['phrases','quiz','premium','about'];
   tabs.forEach(function(t) {
     var panel = document.getElementById('panel-' + t);
     if (panel) panel.classList.toggle('visible', t === tab);
