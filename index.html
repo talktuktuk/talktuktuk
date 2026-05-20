@@ -180,9 +180,25 @@ html, body { font-family: 'Nunito', sans-serif; background: var(--dark); min-hei
 
 <div id="lang-overlay" class="lang-overlay">
   <div class="lang-box">
-    <div style="text-align:center;margin-bottom:12px;">
-      <img src="https://raw.githubusercontent.com/Mickalacki/talktuktuk/main/NEW_TTT_LOGO.png" style="width:110px;height:110px;border-radius:50%;object-fit:cover;" alt="Talk Tuk Tuk">
-    </div>
+   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+
+  <!-- LEFT: LOGO -->
+  <img src="https://raw.githubusercontent.com/Mickalacki/talktuktuk/main/NEW_TTT_LOGO.png" 
+       style="width:60px;height:60px;border-radius:50%;object-fit:cover;" 
+       alt="Talk Tuk Tuk">
+
+  <!-- CENTER: TITLE -->
+  <div style="text-align:center;flex:1;">
+    <h2 style="margin:0;font-size:20px;">Talk Tuk Tuk</h2>
+    <p style="margin:2px 0 0;font-size:12px;color:#555;">What would you like to learn today?</p>
+  </div>
+
+  <!-- RIGHT: FLAG -->
+  <img src="khmer-flag.png" 
+       style="width:28px;height:20px;border-radius:3px;" 
+       alt="Khmer Flag">
+
+</div>
     <h2>Talk Tuk Tuk</h2>
     <p>What would you like to learn today?</p>
     <button class="lang-btn lang-btn-khmer" onclick="setLang('khmer')">🇰🇭 I want to learn Khmer</button>
