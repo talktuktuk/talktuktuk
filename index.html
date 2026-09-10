@@ -2411,7 +2411,7 @@ if (new URLSearchParams(window.location.search).get('from') === 'karma') {
   document.addEventListener('DOMContentLoaded', function() {
     const backButton = document.createElement('button');
     backButton.innerHTML = '← Back to Karma Traders';
-    backButton.style.cssText = 'position:fixed;top:10px;left:10px;z-index:99999;background:#FFD600;color:#1a1a2e;border:none;border-radius:12px;padding:12px 18px;font-weight:700;font-size:14px;cursor:pointer;';
+    backButton.style.cssText = 'position:relative;margin:10px auto 15px;z-index:99999;background:#FFD600;color:#1a1a2e;border:none;border-radius:12px;padding:12px 18px;font-weight:700;font-size:14px;cursor:pointer;';
     backButton.onclick = function() {
       window.location.href = 'https://talktuktuk.github.io/karma-traders/';
     };
