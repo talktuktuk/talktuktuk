@@ -2396,7 +2396,7 @@ function restartQuiz() {
 
 <!-- PREMIUM UI -->
 <script src="premium-ui.js"></script>
-  <script>
+<script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./service-worker.js')
@@ -2404,16 +2404,24 @@ if ('serviceWorker' in navigator) {
       .catch(error => console.log('Service worker registration failed:', error));
   });
 }
+</script>
+
 <script>
-if (new URLSearchParams(window.location.search).get('from') === 'karma') {
-  const backButton = document.createElement('button');
-  backButton.innerHTML = '← Back to Karma Traders';
-  backButton.style.cssText = 'display:block;margin:15px auto;padding:12px 20px;background:#FFD600;color:#1a1a2e;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;';
-  backButton.onclick = function() {
-  window.location.href = 'https://talktuktuk.github.io/karma-traders/';
-  };
-  document.body.insertBefore(backButton, document.body.firstChild);
-}
+window.addEventListener('load', function() {
+  if (new URLSearchParams(window.location.search).get('from') === 'karma') {
+    const backButton = document.createElement('button');
+
+    backButton.innerHTML = '← Back to Karma Traders';
+
+    backButton.style.cssText = 'display:block;margin:15px auto;padding:12px 20px;background:#FFD600;color:#1a1a2e;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;position:relative;z-index:9999;';
+
+    backButton.onclick = function() {
+      window.location.href = 'https://talktuktuk.github.io/karma-traders/';
+    };
+
+    document.body.appendChild(backButton);
+  }
+});
 </script>
 
 </body>
