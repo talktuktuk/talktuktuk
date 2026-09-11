@@ -192,16 +192,33 @@ div id="loading-screen" class="loading-screen" style="display:none;">
 
 <div id="lang-overlay" class="lang-overlay">
   <div class="lang-box">
+
     <div style="text-align:center;margin-bottom:12px;">
-      <img src="https://raw.githubusercontent.com/Mickalacki/talktuktuk/main/NEW_TTT_LOGO.png" style="width:110px;height:110px;border-radius:50%;object-fit:cover;" alt="Talk Tuk Tuk">
+      <img src="https://raw.githubusercontent.com/Mickalacki/talktuktuk/main/NEW_TTT_LOGO.png"
+           style="width:110px;height:110px;border-radius:50%;object-fit:cover;"
+           alt="Talk Tuk Tuk">
     </div>
+
     <h2>Talk Tuk Tuk</h2>
+
     <p>What would you like to learn today?</p>
-    <button class="lang-btn lang-btn-khmer" onclick="setLang('khmer')"> I want to learn Khmer</button>
-    <button class="lang-btn lang-btn-english" onclick="setLang('english')"> I want to learn English</button>
+
+    <button class="lang-btn lang-btn-khmer" onclick="setLang('khmer')">
+      I want to learn Khmer
+    </button>
+
+    <button class="lang-btn lang-btn-english" onclick="setLang('english')">
+      I want to learn English
+    </button>
+
+    <button id="install-app-btn"
+      onclick="installTTT()"
+      style="display:none;width:90%;margin:15px auto 0;background:#1565C0;color:white;border:none;border-radius:14px;padding:14px 12px;font-family:'Fredoka One',cursive;font-size:17px;font-weight:700;cursor:pointer;">
+      📱 Save TTT to Home Screen
+    </button>
+
   </div>
 </div>
-
 <div class="app">
 
 <div class="header">
