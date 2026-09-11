@@ -8,6 +8,8 @@ const APP_FILES = [
   './KHMER-FLAG-LOGO.png'
 ];
 
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQm2y2b_Jnxuu_PUxIpFGlI4-jIvfdoQxSidqSUMDJ6PK9EQAFRXLB9ybl8lUjFgwWoBgvBdImTx4wZ/pub?gid=465524934&single=true&output=csv';
+
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -32,10 +34,38 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const request = event.request;
 
-  // Only handle GET requests
   if (request.method !== 'GET') return;
 
-  // Handle MP4 videos specially
+  /*
+   * GOOGLE SHEETS CSV
+   * Try internet first.
+   * If offline, use the saved copy.
+   */
+  if (request.url === CSV_URL) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          if (response.ok) {
+            const copy = response.clone();
+
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(request, copy);
+            });
+          }
+
+          return response;
+        })
+        .catch(() => {
+          return caches.match(request);
+        })
+    );
+
+    return;
+  }
+
+  /*
+   * FREE MP4 VIDEOS
+   */
   if (request.url.endsWith('.mp4')) {
 
     event.respondWith(
@@ -52,7 +82,7 @@ self.addEventListener('fetch', event => {
             return cached;
           }
 
-          // Video player is asking for a specific byte range
+          // Handle video player's byte-range request
           const buffer = await cached.arrayBuffer();
           const size = buffer.byteLength;
 
@@ -63,6 +93,7 @@ self.addEventListener('fetch', event => {
           }
 
           const start = Number(match[1]);
+
           const end = match[2]
             ? Math.min(Number(match[2]), size - 1)
             : size - 1;
@@ -91,7 +122,7 @@ self.addEventListener('fetch', event => {
           });
         }
 
-        // Video wasn't cached — get it online
+        // Not downloaded yet — use internet
         try {
           const response = await fetch(request);
 
@@ -112,8 +143,9 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Everything else:
-  // use cache if available, otherwise use the internet
+  /*
+   * EVERYTHING ELSE
+   */
   event.respondWith(
     caches.match(request).then(cachedResponse => {
 
