@@ -1,4 +1,6 @@
-const CACHE_NAME = 'talk-tuk-tuk-v2';
+const CACHE_NAME = 'talk-tuk-tuk-v3';
+
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQm2y2b_Jnxuu_PUxIpFGlI4-jIvfdoQxSidqSUMDJ6PK9EQAFRXLB9ybl8lUjFgwWoBgvBdImTx4wZ/pub?gid=465524934&single=true&output=csv';
 
 const APP_FILES = [
   './',
@@ -32,18 +34,61 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const request = event.request;
 
-  // Only handle GET requests
   if (request.method !== 'GET') return;
 
-  // Handle video files specially
+  /*
+   * HANDLE VIDEO FILES
+   */
   if (request.url.endsWith('.mp4')) {
+
     event.respondWith(
       caches.open(CACHE_NAME).then(async cache => {
 
-        const cachedResponse = await cache.match(request.url);
+        const cached = await cache.match(request.url);
 
-        if (cachedResponse) {
-          return cachedResponse;
+        if (cached) {
+
+          const range = request.headers.get('range');
+
+          if (!range) {
+            return cached;
+          }
+
+          const buffer = await cached.arrayBuffer();
+          const size = buffer.byteLength;
+
+          const match = range.match(/bytes=(\d+)-(\d*)/);
+
+          if (!match) {
+            return cached;
+          }
+
+          const start = Number(match[1]);
+          const end = match[2]
+            ? Math.min(Number(match[2]), size - 1)
+            : size - 1;
+
+          if (start >= size) {
+            return new Response(null, {
+              status: 416,
+              headers: {
+                'Content-Range': 'bytes */' + size
+              }
+            });
+          }
+
+          const chunk = buffer.slice(start, end + 1);
+
+          return new Response(chunk, {
+            status: 206,
+            statusText: 'Partial Content',
+            headers: {
+              'Content-Type': 'video/mp4',
+              'Content-Length': chunk.byteLength,
+              'Content-Range': 'bytes ' + start + '-' + end + '/' + size,
+              'Accept-Ranges': 'bytes'
+            }
+          });
         }
 
         try {
@@ -57,8 +102,7 @@ self.addEventListener('fetch', event => {
 
         } catch (error) {
           return new Response('Video unavailable offline', {
-            status: 503,
-            statusText: 'Offline'
+            status: 503
           });
         }
       })
@@ -67,7 +111,43 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Normal files
+  /*
+   * HANDLE THE GOOGLE SHEETS PHRASE CSV
+   */
+  if (request.url === CSV_URL) {
+
+    event.respondWith(
+      caches.open(CACHE_NAME).then(async cache => {
+
+        const cached = await cache.match(CSV_URL);
+
+        if (cached) {
+          return cached;
+        }
+
+        try {
+          const response = await fetch(request);
+
+          if (response.ok) {
+            await cache.put(CSV_URL, response.clone());
+          }
+
+          return response;
+
+        } catch (error) {
+          return new Response('', {
+            status: 503
+          });
+        }
+      })
+    );
+
+    return;
+  }
+
+  /*
+   * HANDLE NORMAL APP FILES
+   */
   event.respondWith(
     caches.match(request).then(cachedResponse => {
 
@@ -78,6 +158,7 @@ self.addEventListener('fetch', event => {
       return fetch(request).then(response => {
 
         if (response.ok) {
+
           const responseClone = response.clone();
 
           caches.open(CACHE_NAME).then(cache => {
@@ -86,6 +167,15 @@ self.addEventListener('fetch', event => {
         }
 
         return response;
+
+      }).catch(() => {
+
+        /*
+         * If offline and opening the app,
+         * return the cached index.html
+         */
+        return caches.match('./index.html');
+
       });
     })
   );
