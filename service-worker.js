@@ -1,7 +1,5 @@
 const CACHE_NAME = 'talk-tuk-tuk-v3';
 
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQm2y2b_Jnxuu_PUxIpFGlI4-jIvfdoQxSidqSUMDJ6PK9EQAFRXLB9ybl8lUjFgwWoBgvBdImTx4wZ/pub?gid=465524934&single=true&output=csv';
-
 const APP_FILES = [
   './',
   './index.html',
@@ -34,11 +32,10 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const request = event.request;
 
+  // Only handle GET requests
   if (request.method !== 'GET') return;
 
-  /*
-   * HANDLE VIDEO FILES
-   */
+  // Handle MP4 videos specially
   if (request.url.endsWith('.mp4')) {
 
     event.respondWith(
@@ -50,10 +47,12 @@ self.addEventListener('fetch', event => {
 
           const range = request.headers.get('range');
 
+          // Normal video request
           if (!range) {
             return cached;
           }
 
+          // Video player is asking for a specific byte range
           const buffer = await cached.arrayBuffer();
           const size = buffer.byteLength;
 
@@ -85,12 +84,14 @@ self.addEventListener('fetch', event => {
             headers: {
               'Content-Type': 'video/mp4',
               'Content-Length': chunk.byteLength,
-              'Content-Range': 'bytes ' + start + '-' + end + '/' + size,
+              'Content-Range':
+                'bytes ' + start + '-' + end + '/' + size,
               'Accept-Ranges': 'bytes'
             }
           });
         }
 
+        // Video wasn't cached — get it online
         try {
           const response = await fetch(request);
 
@@ -111,43 +112,8 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  /*
-   * HANDLE THE GOOGLE SHEETS PHRASE CSV
-   */
-  if (request.url === CSV_URL) {
-
-    event.respondWith(
-      caches.open(CACHE_NAME).then(async cache => {
-
-        const cached = await cache.match(CSV_URL);
-
-        if (cached) {
-          return cached;
-        }
-
-        try {
-          const response = await fetch(request);
-
-          if (response.ok) {
-            await cache.put(CSV_URL, response.clone());
-          }
-
-          return response;
-
-        } catch (error) {
-          return new Response('', {
-            status: 503
-          });
-        }
-      })
-    );
-
-    return;
-  }
-
-  /*
-   * HANDLE NORMAL APP FILES
-   */
+  // Everything else:
+  // use cache if available, otherwise use the internet
   event.respondWith(
     caches.match(request).then(cachedResponse => {
 
@@ -158,7 +124,6 @@ self.addEventListener('fetch', event => {
       return fetch(request).then(response => {
 
         if (response.ok) {
-
           const responseClone = response.clone();
 
           caches.open(CACHE_NAME).then(cache => {
@@ -167,15 +132,6 @@ self.addEventListener('fetch', event => {
         }
 
         return response;
-
-      }).catch(() => {
-
-        /*
-         * If offline and opening the app,
-         * return the cached index.html
-         */
-        return caches.match('./index.html');
-
       });
     })
   );
