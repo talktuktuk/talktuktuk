@@ -2517,7 +2517,49 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<script>
+let deferredInstallPrompt = null;
 
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+
+  var installButton = document.getElementById('install-app-btn');
+
+  if (installButton) {
+    installButton.style.display = 'block';
+  }
+});
+
+async function installTTT() {
+  if (!deferredInstallPrompt) {
+    alert('To save Talk Tuk Tuk to your Home Screen, use your browser menu and choose "Add to Home screen" or "Install app".');
+    return;
+  }
+
+  deferredInstallPrompt.prompt();
+
+  var result = await deferredInstallPrompt.userChoice;
+
+  if (result.outcome === 'accepted') {
+    var installButton = document.getElementById('install-app-btn');
+
+    if (installButton) {
+      installButton.style.display = 'none';
+    }
+  }
+
+  deferredInstallPrompt = null;
+}
+
+window.addEventListener('appinstalled', function() {
+  var installButton = document.getElementById('install-app-btn');
+
+  if (installButton) {
+    installButton.style.display = 'none';
+  }
+});
+</script>
 <script>
 if (new URLSearchParams(window.location.search).get('from') === 'karma') {
   document.addEventListener('DOMContentLoaded', function() {
