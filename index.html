@@ -336,6 +336,18 @@ html, body { font-family: 'Nunito', sans-serif; background: var(--dark); min-hei
   <!-- FREE CATEGORY LIST -->
   <div id="phrases-categories">
 
+    <div style="margin:12px 12px 4px;">
+  <button id="offline-download-btn"
+    onclick="downloadFreeOffline()"
+    style="width:100%;background:#1565C0;color:white;border:none;border-radius:14px;padding:15px 12px;font-family:'Fredoka One',cursive;font-size:17px;cursor:pointer;">
+    Download Free 70 for Offline Use
+  </button>
+
+  <div id="offline-download-status"
+    style="text-align:center;color:white;font-size:12px;font-weight:700;margin-top:7px;min-height:16px;">
+  </div>
+</div>
+    
     <div class="song-list">
 
       <div class="song-item" onclick="openCategory('greetings')">
@@ -2144,7 +2156,85 @@ var catMap = {
   });
   return built;
 }
+async function downloadFreeOffline() {
+  const button = document.getElementById('offline-download-btn');
+  const status = document.getElementById('offline-download-status');
 
+  if (!phrases || Object.keys(phrases).length === 0) {
+    status.textContent = 'Please wait for the phrases to finish loading...';
+    return;
+  }
+
+  const allPhrases = Object.values(phrases).flat();
+
+  if (!allPhrases.length) {
+    status.textContent = 'Phrases are not loaded yet.';
+    return;
+  }
+
+  button.disabled = true;
+  button.style.opacity = '0.6';
+  button.textContent = 'Downloading...';
+
+  try {
+    const cache = await caches.open('talk-tuk-tuk-v2');
+
+    let downloaded = 0;
+    let alreadyCached = 0;
+    let failed = 0;
+
+    for (let i = 0; i < allPhrases.length; i++) {
+      const p = allPhrases[i];
+      const url = baseMediaURL + p.id + '.mp4';
+
+      status.textContent =
+        'Downloading ' + (i + 1) + ' of ' + allPhrases.length + '...';
+
+      const existing = await cache.match(url);
+
+      if (existing) {
+        alreadyCached++;
+        continue;
+      }
+
+      try {
+        const response = await fetch(url);
+
+        if (response.ok) {
+          await cache.put(url, response.clone());
+          downloaded++;
+        } else {
+          failed++;
+        }
+      } catch (err) {
+        failed++;
+      }
+    }
+
+    if (failed === 0) {
+      status.textContent =
+        'Done — all 70 free phrases are ready offline.';
+    } else {
+      status.textContent =
+        'Downloaded ' + (downloaded + alreadyCached) +
+        ' of ' + allPhrases.length +
+        '. ' + failed + ' could not be downloaded.';
+    }
+
+    button.textContent = 'Free 70 Ready Offline';
+    button.style.background = '#2E7D32';
+
+  } catch (err) {
+    console.error('Offline download failed:', err);
+
+    status.textContent =
+      'Download failed. Please check your internet connection and try again.';
+
+    button.disabled = false;
+    button.style.opacity = '1';
+    button.textContent = 'Download Free 70 for Offline Use';
+  }
+}
 function loadPhrases() {
   // Try direct fetch first
   fetch(CSV_URL)
