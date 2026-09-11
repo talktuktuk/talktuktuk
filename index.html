@@ -2373,6 +2373,12 @@ function loadPhrases() {
 function initApp(source) {
   document.getElementById('loading-screen').style.display = 'none';
   updateCategoryCounts();
+
+  var status = document.getElementById('offline-download-status');
+  if (status) {
+    status.textContent = 'Ready to download all 70 phrases';
+  }
+
   document.getElementById('lang-overlay').style.display = 'flex';
 }
 
