@@ -2395,6 +2395,23 @@ function restartQuiz() {
 <!-- PREMIUM UI -->
 <script src="premium-ui.js"></script>
 
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    registrations.forEach(function(registration) {
+      registration.unregister();
+    });
+  });
+}
+
+if ('caches' in window) {
+  caches.keys().then(function(names) {
+    names.forEach(function(name) {
+      caches.delete(name);
+    });
+  });
+}
+</script>
 
 <script>
 if (new URLSearchParams(window.location.search).get('from') === 'karma') {
