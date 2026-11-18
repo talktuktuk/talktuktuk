@@ -2274,7 +2274,69 @@ function loadPhrases() {
 
   })();
 }
+async function downloadFreeOffline() {
 
+  var button = document.getElementById('offline-download-btn');
+  var status = document.getElementById('offline-download-status');
+
+  var allPhrases = Object.values(phrases).flat();
+
+  if (!allPhrases.length) {
+    status.textContent = 'Please wait for phrases to load.';
+    return;
+  }
+
+  button.disabled = true;
+
+  var cache = await caches.open('ttt-shell-v1');
+  var downloaded = 0;
+  var skipped = 0;
+  var failed = 0;
+
+  for (var i = 0; i < allPhrases.length; i++) {
+
+    var url = baseMediaURL + allPhrases[i].id + '.mp4';
+
+    status.textContent =
+      'Saving video ' + (i + 1) + ' of ' + allPhrases.length;
+
+    try {
+
+      var existing = await cache.match(url);
+
+      if (existing) {
+        skipped++;
+        continue;
+      }
+
+      var response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error('Video download failed');
+      }
+
+      await cache.put(url, response.clone());
+
+      downloaded++;
+
+    } catch (error) {
+      failed++;
+      console.log('Could not save:', url, error);
+    }
+  }
+
+  button.disabled = false;
+
+  if (failed === 0) {
+    button.textContent = 'Free 70 Saved Offline';
+    status.textContent = 'Finished! All videos are saved on this device.';
+  } else {
+    button.textContent = 'Try Download Again';
+    status.textContent =
+      'Saved ' + (downloaded + skipped) +
+      ' videos. ' + failed + ' failed.';
+  }
+}
 function initApp(source) {
   document.getElementById('loading-screen').style.display = 'none';
   updateCategoryCounts();
