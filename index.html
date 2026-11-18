@@ -334,7 +334,17 @@ html, body { font-family: 'Nunito', sans-serif; background: var(--dark); min-hei
 
   <!-- FREE CATEGORY LIST -->
   <div id="phrases-categories">
+<div style="padding:12px;">
+  <button id="offline-download-btn"
+    onclick="downloadFreeOffline()"
+    style="width:100%;background:#1565C0;color:white;border:none;border-radius:14px;padding:15px;font-size:17px;cursor:pointer;">
+    Download Free 70 for Offline Use (411 MB)
+  </button>
 
+  <div id="offline-download-status"
+    style="text-align:center;color:white;font-size:12px;margin-top:8px;">
+  </div>
+</div>
     <div class="song-list">
 
       <div class="song-item" onclick="openCategory('greetings')">
