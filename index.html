@@ -2411,8 +2411,13 @@ var firstError = '';
         throw new Error('Could not get Premium video link');
       }
 
-      var videoResponse = await fetch(result.url);
+var videoResponse;
 
+try {
+  videoResponse = await fetch(result.url);
+} catch (error) {
+  throw new Error('VIDEO DOWNLOAD: ' + error.message);
+}
       if (!videoResponse.ok) {
         throw new Error('Video download failed');
       }
