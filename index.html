@@ -1922,24 +1922,6 @@ if (p.id && p.id.indexOf('PRE-') === 0) {
     baseMediaURL + p.id + '.mp4';
 }
 
-     document.getElementById('phrase-video-src').src = result.url + '&v=' + Date.now();
-
-    } catch (err) {
-
-      console.error('Premium video error:', err);
-
-      alert('Sorry, this Premium video could not be loaded.');
-
-      document.getElementById('phrases-list').style.display = 'block';
-
-      return;
-    }
-
-  } else {
-
-    document.getElementById('phrase-video-src').src =
-      baseMediaURL + p.id + '.mp4';
-  }
 
  document.getElementById('phrase-player').style.display = 'block';
 
