@@ -2360,8 +2360,7 @@ async function downloadFreeOffline() {
   var button = document.getElementById('premium-offline-download-btn');
   var status = document.getElementById('premium-offline-download-status');
 
-  var allPhrases = Object.values(premiumPhrases).flat();
-
+var allPhrases = Object.values(premiumPhrases).flat().slice(0, 1);
   if (!allPhrases.length) {
     status.textContent = 'Please wait for Premium phrases to load.';
     return;
