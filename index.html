@@ -2347,6 +2347,100 @@ async function downloadFreeOffline() {
       ' videos. ' + failed + ' failed.';
   }
 }
+  async function downloadPremiumOffline() {
+
+  var button = document.getElementById('premium-offline-download-btn');
+  var status = document.getElementById('premium-offline-download-status');
+
+  var allPhrases = Object.values(premiumPhrases).flat();
+
+  if (!allPhrases.length) {
+    status.textContent = 'Please wait for Premium phrases to load.';
+    return;
+  }
+
+  button.disabled = true;
+
+  var cache = await caches.open('ttt-shell-v1');
+  var downloaded = 0;
+  var skipped = 0;
+  var failed = 0;
+
+  for (var i = 0; i < allPhrases.length; i++) {
+
+    var p = allPhrases[i];
+
+    var cacheURL = location.origin +
+      '/premium-offline/' + p.id + '.mp4';
+
+    status.textContent =
+      'Saving Premium video ' + (i + 1) + ' of ' + allPhrases.length;
+
+    try {
+
+      var existing = await cache.match(cacheURL);
+
+      if (existing) {
+        skipped++;
+        continue;
+      }
+
+      var response = await fetch(
+        SUPABASE_URL + '/functions/v1/bright-api',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            fileName: p.id + '.mp4'
+          })
+        }
+      );
+
+      var result = await response.json();
+
+      if (!response.ok || !result.success || !result.url) {
+        throw new Error('Could not get Premium video link');
+      }
+
+      var videoResponse = await fetch(result.url);
+
+      if (!videoResponse.ok) {
+        throw new Error('Video download failed');
+      }
+
+      await cache.put(cacheURL, videoResponse);
+
+      downloaded++;
+
+    } catch (error) {
+
+      failed++;
+      console.log('Premium download failed:', p.id, error);
+
+    }
+  }
+
+  button.disabled = false;
+
+  if (failed === 0) {
+
+    button.textContent =
+      'All ' + allPhrases.length + ' Premium Phrases Saved Offline';
+
+    status.textContent =
+      'Finished! All Premium videos are saved on this device.';
+
+  } else {
+
+    button.textContent = 'Try Premium Download Again';
+
+    status.textContent =
+      'Saved ' + (downloaded + skipped) +
+      ' videos. ' + failed + ' failed.';
+  }
+}
 function initApp(source) {
   document.getElementById('loading-screen').style.display = 'none';
   updateCategoryCounts();
