@@ -1874,27 +1874,53 @@ async function openPhrase(p) {
 
 if (p.id && p.id.indexOf('PRE-') === 0) {
 
-    try {
+  var premiumCacheURL =
+    location.origin + '/premium-offline/' + p.id + '.mp4';
+
+  try {
+
+    var premiumCache = await caches.open('ttt-shell-v1');
+    var savedPremiumVideo = await premiumCache.match(premiumCacheURL);
+
+    if (savedPremiumVideo) {
+
+      document.getElementById('phrase-video-src').src =
+        premiumCacheURL;
+
+    } else {
 
       var response = await fetch(
         SUPABASE_URL + '/functions/v1/bright-api',
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            fileName: p.id + '.mp4'
-          })
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({fileName: p.id + '.mp4'})
         }
       );
 
       var result = await response.json();
 
-
       if (!response.ok || !result.success || !result.url) {
         throw new Error(result.error || 'Premium video unavailable');
       }
+
+      document.getElementById('phrase-video-src').src =
+        result.url + '&v=' + Date.now();
+    }
+
+  } catch (err) {
+
+    console.error('Premium video error:', err);
+    alert('Sorry, this Premium video could not be loaded.');
+    document.getElementById('phrases-list').style.display = 'block';
+    return;
+  }
+
+} else {
+
+  document.getElementById('phrase-video-src').src =
+    baseMediaURL + p.id + '.mp4';
+}
 
      document.getElementById('phrase-video-src').src = result.url + '&v=' + Date.now();
 
