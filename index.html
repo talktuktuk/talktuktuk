@@ -2450,8 +2450,8 @@ var firstError = '';
 
     status.textContent =
       'Saved ' + (downloaded + skipped) +
-      ' videos. ' + failed + ' failed.';
-  }
+ ' videos. ' + failed + ' failed. Error: ' + firstError;
+      }
 }
 function initApp(source) {
   document.getElementById('loading-screen').style.display = 'none';
