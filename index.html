@@ -2372,7 +2372,7 @@ var allPhrases = Object.values(premiumPhrases).flat().slice(0, 1);
   var downloaded = 0;
   var skipped = 0;
   var failed = 0;
-
+var firstError = '';
   for (var i = 0; i < allPhrases.length; i++) {
 
     var p = allPhrases[i];
@@ -2421,12 +2421,17 @@ var allPhrases = Object.values(premiumPhrases).flat().slice(0, 1);
 
       downloaded++;
 
-    } catch (error) {
+   } catch (error) {
 
-      failed++;
-      console.log('Premium download failed:', p.id, error);
+  failed++;
 
-    }
+  if (!firstError) {
+    firstError = error.message || String(error);
+  }
+
+  console.log('Premium download failed:', p.id, error);
+
+}
   }
 
   button.disabled = false;
