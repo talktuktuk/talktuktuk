@@ -123,7 +123,7 @@
       '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" ' +
       'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
       '<circle cx="12" cy="12" r="10"/><path d="M12 7v8M8.5 11.5L12 15l3.5-3.5"/></svg>' +
-      "<span>DOWNLOAD</span>";
+      "<span>INSTALL APP</span>";
 
     btn.addEventListener("click", function () {
       if (deferredPrompt) {
