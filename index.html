@@ -2101,9 +2101,15 @@ function loadPremiumPhrases() {
 
       });
 
-      premiumPhrases = built;
+premiumPhrases = built;
 
-      console.log('PREMIUM CATEGORY KEYS:', Object.keys(premiumPhrases));
+// Save Premium categories and phrases for offline use
+localStorage.setItem(
+  'ttt-premium-phrases',
+  JSON.stringify(premiumPhrases)
+);
+
+console.log('PREMIUM CATEGORY KEYS:', Object.keys(premiumPhrases));
 
       console.log(
         'PREMIUM CATEGORY BREAKDOWN:',
