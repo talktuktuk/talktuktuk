@@ -2138,6 +2138,7 @@ checkPremiumOffline();
     try {
       premiumPhrases = JSON.parse(savedPremium);
       console.log('Premium categories loaded offline');
+checkPremiumOffline();
     } catch (error) {
       console.warn('Saved Premium data could not be read:', error);
     }
