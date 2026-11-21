@@ -113,7 +113,7 @@
     var btn = document.createElement("button");
     btn.id = "ttt-download-btn";
     btn.type = "button";
-    btn.setAttribute("aria-label", "Download the Talk Tuk Tuk app");
+    btn.setAttribute("aria-label", "Install the Talk Tuk Tuk app");
     btn.style.cssText =
       "display:inline-flex;align-items:center;gap:8px;background:#6200EA;color:#fff;" +
       "border:none;border-radius:16px;padding:9px 16px 9px 10px;" +
