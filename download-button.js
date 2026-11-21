@@ -38,7 +38,7 @@
       steps = [
         "This page is open inside another app.",
         "Tap the menu and choose Open in Chrome (or Open in browser).",
-        "Then tap DOWNLOAD again."
+        "Then tap INSTALL APP again."
       ];
     } else if (isIOS) {
       steps = [
