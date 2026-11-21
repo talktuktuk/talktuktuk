@@ -2490,11 +2490,9 @@ firstError = p.id + ': ' + (error.message || String(error));
 
   if (failed === 0) {
 
-    button.textContent =
-      'All ' + allPhrases.length + ' Premium Phrases Saved Offline';
-
-    status.textContent =
-      'Finished! All Premium videos are saved on this device.';
+   button.style.display = 'none';
+status.style.color = '#4ade80';
+status.textContent = '✓ All 160 Premium phrases available offline';
 
   } else {
 
