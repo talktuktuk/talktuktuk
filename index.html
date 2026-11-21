@@ -2129,8 +2129,19 @@ console.log('PREMIUM CATEGORY KEYS:', Object.keys(premiumPhrases));
 
     })
     .catch(function(err) {
-      console.warn('Premium load failed:', err.message);
-    });
+  console.warn('Premium load failed:', err.message);
+
+  var savedPremium = localStorage.getItem('ttt-premium-phrases');
+
+  if (savedPremium) {
+    try {
+      premiumPhrases = JSON.parse(savedPremium);
+      console.log('Premium categories loaded offline');
+    } catch (error) {
+      console.warn('Saved Premium data could not be read:', error);
+    }
+  }
+});
 }
 
 function buildPhrasesFromCSV(rows) {
