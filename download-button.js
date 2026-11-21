@@ -134,7 +134,20 @@
         showHelp();
       }
     });
-    row.appendChild(btn);
+   row.appendChild(btn);
+
+    // Show installation invitation once
+    if (!localStorage.getItem("ttt-install-invited")) {
+      setTimeout(function () {
+        localStorage.setItem("ttt-install-invited", "yes");
+
+        if (confirm(
+          "Install Talk Tuk Tuk on your home screen or desktop for quick and easy access?"
+        )) {
+          showHelp();
+        }
+      }, 2000);
+    }
 
     // Once installed, the button disappears
     window.addEventListener("appinstalled", function () {
