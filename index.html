@@ -2508,6 +2508,7 @@ firstError = p.id + ': ' + (error.message || String(error));
 function initApp(source) {
   document.getElementById('loading-screen').style.display = 'none';
   updateCategoryCounts();
+  checkFreeOffline();
   document.getElementById('lang-overlay').style.display = 'flex';
 }
 
