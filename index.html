@@ -2431,7 +2431,7 @@ try {
   failed++;
 
   if (!firstError) {
-    firstError = error.message || String(error);
+firstError = p.id + ': ' + (error.message || String(error));
   }
 
   console.log('Premium download failed:', p.id, error);
