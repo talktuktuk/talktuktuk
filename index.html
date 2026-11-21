@@ -2309,6 +2309,35 @@ function loadPhrases() {
 
   })();
 }
+  async function checkFreeOffline() {
+  var button = document.getElementById('offline-download-btn');
+  var status = document.getElementById('offline-download-status');
+  var allPhrases = Object.values(phrases).flat();
+
+  if (allPhrases.length !== 70) return;
+
+  try {
+    var cache = await caches.open('ttt-shell-v1');
+
+    for (var i = 0; i < allPhrases.length; i++) {
+      var url = baseMediaURL + allPhrases[i].id + '.mp4';
+      var saved = await cache.match(url);
+
+      if (!saved) {
+        button.style.display = '';
+        status.textContent = '';
+        return;
+      }
+    }
+
+    button.style.display = 'none';
+    status.style.color = '#4ade80';
+    status.textContent = '✓ All 70 Free phrases available offline';
+
+  } catch (error) {
+    console.log('Offline check failed:', error);
+  }
+}
 async function downloadFreeOffline() {
 
   var button = document.getElementById('offline-download-btn');
