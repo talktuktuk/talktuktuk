@@ -979,6 +979,17 @@ function catLabelsPremium(cat) {
         <div style="font-size:48px;margin-bottom:10px;">🎯</div>
         <div style="font-family:Fredoka One,cursive;font-size:24px;color:var(--blue);margin-bottom:8px;">Khmer Quiz</div>
         <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">Test your Khmer knowledge! Pick a category or go for the mixed challenge.</p>
+        <div style="display:flex;gap:10px;margin-bottom:18px;">
+  <button onclick="selectQuizMode('free')" id="quiz-mode-free"
+    style="flex:1;padding:14px;border:0;border-radius:12px;background:#FFD600;font-weight:bold;cursor:pointer;">
+    🆓 Free Quiz
+  </button>
+
+  <button onclick="selectQuizMode('premium')" id="quiz-mode-premium"
+    style="flex:1;padding:14px;border:0;border-radius:12px;background:#ddd;font-weight:bold;cursor:pointer;">
+    ⭐ Premium Quiz
+  </button>
+</div>
         <div class="quiz-cat-grid" id="quiz-cat-grid">
           <button class="quiz-cat-btn selected" data-cat="all" onclick="selectQuizCat(this)">🌟 All Categories</button>
           <button class="quiz-cat-btn" data-cat="greetings" onclick="selectQuizCat(this)">👋 Greetings</button>
