@@ -2713,10 +2713,10 @@ var wrongPool;
     wrongPool = shuffle(otherPool).slice(0, 3);
   } else {
     // Single category: wrong answers from SAME category - harder!
-    var samePool = phrases[qCat] ? phrases[qCat].filter(function(p) { return p.id !== q.id; }) : [];
+    var samePool = source[qCat] ? source[qCat].filter(function(p) { return p.id !== q.id; }) : [];
     wrongPool = shuffle(samePool);
     if (wrongPool.length < 3) {
-      var padPool = getAllPhrases().filter(function(p) { return p.id !== q.id && p.cat !== qCat; });
+      var padPool = getAllQuizPhrases().filter(function(p) { return p.id !== q.id && p.cat !== qCat; });
       wrongPool = wrongPool.concat(shuffle(padPool)).slice(0, 3);
     } else {
       wrongPool = wrongPool.slice(0, 3);
