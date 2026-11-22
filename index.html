@@ -2619,7 +2619,24 @@ function selectQuizCat(btn) {
   quizSelectedCat = btn.getAttribute('data-cat');
   startQuiz();
 }
+function getQuizPhrases() {
+  return quizMode === 'premium' ? premiumPhrases : phrases;
+}
 
+function getAllQuizPhrases() {
+  var all = [];
+  var source = getQuizPhrases();
+
+  Object.keys(source).forEach(function(cat) {
+    source[cat].forEach(function(p) {
+      var copy = Object.assign({}, p);
+      copy.cat = cat;
+      all.push(copy);
+    });
+  });
+
+  return all;
+}
 function getAllPhrases() {
   var all = [];
   Object.keys(phrases).forEach(function(cat) {
