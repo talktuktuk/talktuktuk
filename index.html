@@ -2659,20 +2659,38 @@ function shuffle(arr) {
 }
 
 function startQuiz() {
+  var source = getQuizPhrases();
   var pool;
-  if (quizSelectedCat === 'all') {
-    pool = getAllPhrases();
-  } else {
-    pool = phrases[quizSelectedCat].map(function(p) { return Object.assign({}, p, {cat: quizSelectedCat}); });
+
+  if (quizMode === 'premium' && !PremiumLicense.isUnlocked()) {
+    PremiumUI.showPaymentPrompt();
+    return;
   }
+
+  if (quizSelectedCat === 'all') {
+    pool = getAllQuizPhrases();
+  } else {
+    pool = (source[quizSelectedCat] || []).map(function(p) {
+      return Object.assign({}, p, {cat: quizSelectedCat});
+    });
+  }
+
+  if (pool.length === 0) {
+    alert('No phrases available for this category.');
+    return;
+  }
+
   quizQuestions = shuffle(pool).slice(0, Math.min(10, pool.length));
   quizCurrentIdx = 0;
   quizScore = 0;
+
   document.getElementById('quiz-start').style.display = 'none';
   document.getElementById('quiz-score').style.display = 'none';
   document.getElementById('quiz-question').style.display = 'block';
+
   showQuestion();
 }
+  
 
 function showQuestion() {
   quizAnswered = false;
