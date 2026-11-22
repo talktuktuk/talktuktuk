@@ -1473,6 +1473,10 @@ function highlightLine(type, n, total) {
 }
 
 function showMain(tab) {
+  var premiumArea = document.getElementById('premium-area');
+if (premiumArea) {
+  premiumArea.style.display = PremiumLicense.isUnlocked() ? 'none' : 'block';
+}
   // Stop ALL playing audio when switching tabs
   var textMap = { kids: '▶ Sing Along!', basics: '▶ Listen & Learn!', khmer: '▶ Sing Along!' };
   ['khmer','kids'].forEach(function(type) {
