@@ -2594,6 +2594,25 @@ var quizCurrentIdx = 0;
 var quizScore = 0;
 var quizAnswered = false;
 
+ var quizMode = 'free';
+
+function selectQuizMode(mode) {
+
+  if (mode === 'premium' && !PremiumLicense.isUnlocked()) {
+    PremiumUI.showPaymentPrompt();
+    return;
+  }
+
+  quizMode = mode;
+  quizSelectedCat = 'all';
+
+  document.getElementById('quiz-mode-free').style.background =
+    mode === 'free' ? '#FFD600' : '#ddd';
+
+  document.getElementById('quiz-mode-premium').style.background =
+    mode === 'premium' ? '#FFD600' : '#ddd';
+
+} 
 function selectQuizCat(btn) {
   document.querySelectorAll('.quiz-cat-btn').forEach(function(b) { b.classList.remove('selected'); });
   btn.classList.add('selected');
