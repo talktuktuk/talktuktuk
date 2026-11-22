@@ -2709,7 +2709,7 @@ var source = getQuizPhrases();
 var wrongPool;
   if (quizSelectedCat === 'all') {
     // All categories: wrong answers from DIFFERENT categories - more interesting!
-    var otherPool = getAllPhrases().filter(function(p) { return p.id !== q.id && p.cat !== qCat; });
+    var otherPool = getAllQuizPhrases().filter(function(p) { return p.id !== q.id && p.cat !== qCat; });
     wrongPool = shuffle(otherPool).slice(0, 3);
   } else {
     // Single category: wrong answers from SAME category - harder!
