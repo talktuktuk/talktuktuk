@@ -2613,6 +2613,57 @@ function selectQuizMode(mode) {
     mode === 'premium' ? '#FFD600' : '#ddd';
 
 } 
+  function showQuizCategories() {
+  var grid = document.getElementById('quiz-cat-grid');
+
+  var freeLabels = {
+    greetings: '👋 Greetings',
+    food: '🍜 Food & Drink',
+    transport: '🛺 Getting Around',
+    social: '🤝 Social',
+    numbers: '🔢 Numbers',
+    days: '📅 Days',
+    colours: '🎨 Colours'
+  };
+
+  var premiumLabels = {
+    bar: '🍻 Nightlife & Bar Survival',
+    meeting: '🤝 Meeting People',
+    shopping: '🛍️ Shopping & Bargaining',
+    days: '📅 Days & Time',
+    extras: '🔧 Useful Extras',
+    emergency: '🚑 Emergency & Health',
+    slang: '😎 Expressions & Slang',
+    foodpro: '🍜 Food & Drink Pro',
+    weather: '🌦️ Weather & Nature',
+    relationships: '❤️ People & Relationships',
+    linking: '🔗 Linking Words',
+    exercise: '🏃 Exercise',
+    colours: '🎨 Colours',
+    pool: '🎱 Pool'
+  };
+
+  var labels = quizMode === 'premium' ? premiumLabels : freeLabels;
+
+  grid.innerHTML = '';
+
+  function addButton(cat, label) {
+    var btn = document.createElement('button');
+    btn.className = 'quiz-cat-btn' + (cat === 'all' ? ' selected' : '');
+    btn.setAttribute('data-cat', cat);
+    btn.textContent = label;
+    btn.onclick = function() {
+      selectQuizCat(btn);
+    };
+    grid.appendChild(btn);
+  }
+
+  addButton('all', '🌟 All Categories');
+
+  Object.keys(labels).forEach(function(cat) {
+    addButton(cat, labels[cat]);
+  });
+}
 function selectQuizCat(btn) {
   document.querySelectorAll('.quiz-cat-btn').forEach(function(b) { b.classList.remove('selected'); });
   btn.classList.add('selected');
