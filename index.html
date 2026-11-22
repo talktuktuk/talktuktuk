@@ -1485,7 +1485,12 @@ function showMain(tab) {
   });
   if (kidsPlayer) kidsPlayer.pauseVideo();
 
-
+if (tab === 'premium' && PremiumLicense.isUnlocked()) {
+  tab = 'phrases';
+  setTimeout(function() {
+    openPremiumCategories();
+  }, 0);
+}
 var tabs = ['phrases','quiz','premium','about'];
   tabs.forEach(function(t) {
     var panel = document.getElementById('panel-' + t);
