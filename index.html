@@ -1493,6 +1493,9 @@ if (tab === 'premium' && PremiumLicense.isUnlocked()) {
   tab = 'phrases';
   setTimeout(function() {
     openPremiumCategories();
+
+    document.getElementById('mtab-phrases').classList.remove('active');
+    document.getElementById('mtab-premium').classList.add('active');
   }, 0);
 }
 var tabs = ['phrases','quiz','premium','about'];
