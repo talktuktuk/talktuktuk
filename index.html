@@ -2436,7 +2436,7 @@ status.textContent = '✓ All 70 Free phrases available offline';
   var status = document.getElementById('premium-offline-download-status');
   var allPhrases = Object.values(premiumPhrases).flat();
 
-  if (allPhrases.length !== 160) return;
+  if (!allPhrases.length) return;
 
   try {
     var cache = await caches.open('ttt-shell-v1');
