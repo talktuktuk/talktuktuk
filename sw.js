@@ -5,23 +5,11 @@ const VIDEO_BASE =
   'https://raw.githubusercontent.com/Mickalacki/talktuktuk/main/';
 
 self.addEventListener('install', function (e) {
-  self.skipWaiting();
+  e.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', function (e) {
-  e.waitUntil(
-    caches.keys().then(function (keys) {
-      return Promise.all(
-        keys.filter(function (k) {
-          return k !== CACHE;
-        }).map(function (k) {
-          return caches.delete(k);
-        })
-      );
-    }).then(function () {
-      return self.clients.claim();
-    })
-  );
+  e.waitUntil(self.clients.claim());
 });
 
 self.addEventListener('fetch', function (e) {
@@ -77,24 +65,45 @@ self.addEventListener('fetch', function (e) {
     return;
   }
 
-  // Leave other external websites alone.
+  // Leave other external websites alone
   if (url.origin !== self.location.origin) return;
 
-  // Network first for the app's own files.
+  // Network first for the app's own files
   e.respondWith(
-    fetch(req).then(function (res) {
-      var copy = res.clone();
-      caches.open(CACHE).then(function (c) {
-        c.put(req, copy);
-      });
-      return res;
-    }).catch(function () {
-      return caches.match(req);
-    })
+    (async function () {
+      var cache = await caches.open(CACHE);
+
+      try {
+        var res = await fetch(req, {
+          cache: 'no-cache'
+        });
+
+        if (res.ok) {
+          try {
+            await cache.put(req, res.clone());
+          } catch (cacheError) {
+            console.log('App cache update failed:', cacheError);
+          }
+        }
+
+        return res;
+
+      } catch (error) {
+        var saved = await cache.match(req);
+
+        if (saved) {
+          return saved;
+        }
+
+        return new Response('Offline', {
+          status: 503
+        });
+      }
+    })()
   );
 });
 
-// Serve saved videos, including browser range requests.
+// Serve saved videos, including browser range requests
 async function serveVideo(saved, req) {
   var range = req.headers.get('range');
 
@@ -131,12 +140,15 @@ async function serveVideo(saved, req) {
   end = Math.min(end, size - 1);
 
   var headers = new Headers();
+
   headers.set(
     'Content-Type',
     saved.headers.get('Content-Type') || 'video/mp4'
   );
+
   headers.set('Accept-Ranges', 'bytes');
   headers.set('Content-Length', String(end - start + 1));
+
   headers.set(
     'Content-Range',
     'bytes ' + start + '-' + end + '/' + size
