@@ -2343,7 +2343,7 @@ function loadPhrases() {
   var status = document.getElementById('offline-download-status');
   var allPhrases = Object.values(phrases).flat();
 
-  if (allPhrases.length !== 70) return;
+  if (!allPhrases.length) return;
 
   try {
     var cache = await caches.open('ttt-shell-v1');
