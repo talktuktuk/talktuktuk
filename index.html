@@ -2456,7 +2456,7 @@ status.textContent = '✓ All 70 Free phrases available offline';
 
     button.style.display = 'none';
     status.style.color = '#4ade80';
-    status.textContent = '✓ All 160 Premium phrases available offline';
+    status.textContent = '✓ All ' + allPhrases.length + ' Premium phrases available offline';
 
   } catch (error) {
     console.log('Premium offline check failed:', error);
