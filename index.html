@@ -2089,7 +2089,10 @@ function loadPremiumPhrases() {
         var rawCat = (row.Category || '').trim();
         var cat = premiumCatMap[rawCat];
 
-        if (!cat) return;
+        if (!cat) {
+  console.log('UNMATCHED CATEGORY:', JSON.stringify(rawCat));
+  return;
+}
 
         if (!built[cat]) {
           built[cat] = [];
