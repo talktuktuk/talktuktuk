@@ -2536,6 +2536,7 @@ await cache.put(versionURL, new Response(String(version)));
    } catch (error) {
 
   failed++;
+failedIDs.push(p.id);
 
   if (!firstError) {
 firstError = p.id + ': ' + (error.message || String(error));
