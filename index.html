@@ -2483,6 +2483,13 @@ var firstError = '';
       '/premium-offline/' + p.id + '.mp4';
 var version = getVideoVersion(p.id);
 var versionURL = cacheURL + '?version=' + version;
+    var existing = await cache.match(cacheURL);
+var savedVersion = await cache.match(versionURL);
+
+if (existing && (savedVersion || version === 1)) {
+  skipped++;
+  continue;
+}
     status.textContent =
       'Saving Premium video ' + (i + 1) + ' of ' + allPhrases.length;
 
