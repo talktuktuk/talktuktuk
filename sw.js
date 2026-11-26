@@ -91,6 +91,18 @@ self.addEventListener('fetch', function (e) {
       } catch (error) {
         var saved = await cache.match(req);
 
+if (!saved && req.mode === 'navigate') {
+  saved = await cache.match(
+    self.location.origin + '/talktuktuk/'
+  );
+
+  if (!saved) {
+    saved = await cache.match(
+      self.location.origin + '/talktuktuk/index.html'
+    );
+  }
+}
+
         if (saved) {
           return saved;
         }
