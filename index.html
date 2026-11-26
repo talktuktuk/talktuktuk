@@ -2481,7 +2481,8 @@ var firstError = '';
 
     var cacheURL = location.origin +
       '/premium-offline/' + p.id + '.mp4';
-
+var version = getVideoVersion(p.id);
+var versionURL = cacheURL + '?version=' + version;
     status.textContent =
       'Saving Premium video ' + (i + 1) + ' of ' + allPhrases.length;
 
