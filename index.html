@@ -2475,6 +2475,7 @@ var allPhrases = Object.values(premiumPhrases).flat();
   var skipped = 0;
   var failed = 0;
 var firstError = '';
+    var failedIDs = [];
   for (var i = 0; i < allPhrases.length; i++) {
 
     var p = allPhrases[i];
