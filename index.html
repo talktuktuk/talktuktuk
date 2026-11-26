@@ -2439,13 +2439,17 @@ function getVideoVersion(id) {
       var url = location.origin +
         '/premium-offline/' + allPhrases[i].id + '.mp4';
 
-      var saved = await cache.match(url);
+     var saved = await cache.match(url);
+var version = getVideoVersion(allPhrases[i].id);
+var savedVersion = await cache.match(url + '?version=' + version);
 
-      if (!saved) {
-        button.style.display = '';
-        status.textContent = '';
-        return;
-      }
+if (!saved || (version > 1 && !savedVersion)) {
+  button.style.display = 'block';
+  button.textContent = 'Download Missing or Updated Videos';
+  status.style.color = '#FFD600';
+  status.textContent = 'New or missing Premium videos available';
+  return;
+} 
     }
 
   button.style.display = 'block';
