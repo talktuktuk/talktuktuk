@@ -773,22 +773,17 @@ function closePremiumCategories() {
 
 }
 function getPremiumIcon(cat) {
-  var premiumIcons = {
+ var premiumIcons = {
+    survival: '🛺',
     bar: '🍻',
     meeting: '🤝',
     shopping: '🛍️',
-    days: '📅',
-    extras: '🔧',
-    emergency: '🚑',
-    slang: '😎',
     foodpro: '🍜',
-    weather: '🌦️',
-    relationships: '❤️',
-    linking: '🔗',
-    exercise: '🏃',
-    colours: '🎨',
-    pool: '🎱',
-survival: '🛺'
+    emergency: '🚑',
+    days: '📅',
+    slang: '😎',
+    weather: '🌴',
+    extras: '🔧'
   };
 
   return premiumIcons[cat] || '⭐';
