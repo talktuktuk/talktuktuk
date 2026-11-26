@@ -1891,8 +1891,10 @@ if (p.id && p.id.indexOf('PRE-') === 0) {
 
     if (savedPremiumVideo) {
 
+      var premiumBlob = await savedPremiumVideo.blob();
+
       document.getElementById('phrase-video-src').src =
-        premiumCacheURL;
+        URL.createObjectURL(premiumBlob);
 
     } else {
 
