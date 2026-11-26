@@ -2473,12 +2473,6 @@ var firstError = '';
 
     try {
 
-      var existing = await cache.match(cacheURL);
-
-      if (existing) {
-        skipped++;
-        continue;
-      }
 
       var response = await fetch(
         SUPABASE_URL + '/functions/v1/bright-api',
