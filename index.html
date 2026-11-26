@@ -2562,7 +2562,8 @@ status.textContent = '✓ All 200 Premium phrases available offline';
 
     status.textContent =
       'Saved ' + (downloaded + skipped) +
- ' videos. ' + failed + ' failed. Error: ' + firstError;
+ ' videos. ' + failed + ' failed. Failed IDs: ' +
+failedIDs.join(', ') + '. Error: ' + firstError;
       }
 }
 function initApp(source) {
