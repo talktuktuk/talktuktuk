@@ -71,9 +71,25 @@ self.addEventListener('fetch', function (e) {
   // Network first for the app's own files
   e.respondWith(
     (async function () {
-      var cache = await caches.open(CACHE);
+   var cache = await caches.open(CACHE);
 
-      try {
+if (req.mode === 'navigate' && !self.navigator.onLine) {
+  var offlinePage = await cache.match(
+    self.location.origin + '/talktuktuk/'
+  );
+
+  if (!offlinePage) {
+    offlinePage = await cache.match(
+      self.location.origin + '/talktuktuk/index.html'
+    );
+  }
+
+  if (offlinePage) {
+    return offlinePage;
+  }
+}
+
+try {
         var res = await fetch(req, {
           cache: 'no-cache'
         });
