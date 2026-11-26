@@ -2412,6 +2412,19 @@ status.textContent = '✓ All 70 Free phrases available offline';
       ' videos. ' + failed + ' failed.';
   }
 }
+  var videoVersions = {
+  'PHR-SOC-004': 2,
+  'PRE-SHO-011': 2,
+  'PRE-FOO-020': 2,
+  'PRE-BIT-022': 2,
+  'PRE-SLA-018': 2,
+  'PRE-BAR-006': 2,
+  'PRE-SLA-015': 2
+};
+
+function getVideoVersion(id) {
+  return videoVersions[id] || 1;
+}
   async function checkPremiumOffline() {
   var button = document.getElementById('premium-offline-download-btn');
   var status = document.getElementById('premium-offline-download-status');
