@@ -2528,6 +2528,8 @@ try {
 
       await cache.put(cacheURL, videoResponse);
 
+await cache.put(versionURL, new Response(String(version)));
+
       downloaded++;
 
    } catch (error) {
