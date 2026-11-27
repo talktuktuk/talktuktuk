@@ -116,6 +116,84 @@ const PremiumUI = {
     };
   },
 
+  // Display only: real payment verification must happen on the server.
+  showPaymentSuccess: function(recoveryCode, onStart, preview = false) {
+    const code = PremiumLicense.normalizeRecoveryCode(recoveryCode);
+    if (!/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(code)) {
+      throw new Error('Invalid recovery code');
+    }
+    if (!preview && typeof onStart !== 'function') {
+      throw new Error('Payment completion handler required');
+    }
+    const existing = document.getElementById('ttt-premium-overlay');
+    if (existing) existing.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'ttt-premium-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9999;padding:12px;box-sizing:border-box;';
+    const content = document.createElement('div');
+    content.style.cssText = 'background:white;color:#333;border-radius:20px;padding:20px;max-width:400px;width:100%;max-height:100%;overflow-y:auto;text-align:center;box-sizing:border-box;';
+    content.innerHTML = `
+      <img src="NEW_TTT_LOGO.png" alt="Talk Tuk Tuk" style="width:85px;height:85px;object-fit:contain;">
+      <p data-preview hidden style="color:#a35b00;font-weight:bold;">TEST PREVIEW — No payment taken</p>
+      <h2 style="color:#174B32;">✓ Payment Successful!</h2>
+      <strong>Welcome to Talk Tuk Tuk Premium</strong>
+      <p>Lifetime access to all 250 phrases, interactive quizzes and offline learning.</p>
+      <strong>Your Personal Recovery Code</strong>
+      <input data-code readonly aria-label="Your recovery code" style="width:100%;box-sizing:border-box;text-align:center;font-size:24px;font-weight:bold;padding:12px;margin:10px 0;border:1px solid #ccc;border-radius:10px;">
+      <button type="button" data-copy style="width:100%;padding:12px;background:#FFD600;color:#333;border:0;border-radius:20px;margin-bottom:8px;">Copy Recovery Code</button>
+      <button type="button" data-save style="width:100%;padding:12px;background:#eee;color:#333;border:0;border-radius:20px;">Save Recovery Code</button>
+      <p style="font-size:14px;">Keep this code private and safe. You will need it to restore Premium or activate a second device. You can replace an old device for free.</p>
+      <label style="display:flex;align-items:center;gap:8px;text-align:left;"><input type="checkbox" data-confirm> I have saved my recovery code</label>
+      <div role="status" style="font-size:13px;margin:8px 0;"></div>
+      <button type="button" data-start disabled style="width:100%;padding:14px;background:#174B32;color:white;border:0;border-radius:20px;opacity:.5;">Start Learning</button>`;
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
+    const field = content.querySelector('[data-code]');
+    const status = content.querySelector('[role="status"]');
+    const confirmSaved = content.querySelector('[data-confirm]');
+    const start = content.querySelector('[data-start]');
+    field.value = code;
+    content.querySelector('[data-preview]').hidden = !preview;
+    content.querySelector('[data-copy]').onclick = async function() {
+      try {
+        await navigator.clipboard.writeText(code);
+        status.textContent = 'Recovery code copied.';
+      } catch {
+        field.focus(); field.select();
+        status.textContent = 'Select and copy the recovery code manually.';
+      }
+    };
+    content.querySelector('[data-save]').onclick = function() {
+      const blob = new Blob([(preview ? 'TEST PREVIEW — Not a valid purchase\n' : '') + 'Talk Tuk Tuk Premium\nRecovery code: ' + code + '\nKeep this code private and safe.\n'], {type:'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Talk-Tuk-Tuk-Recovery-Code.txt';
+      document.body.appendChild(link);
+      link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      status.textContent = 'Check your downloads for the recovery code file.';
+    };
+    confirmSaved.onchange = function() {
+      start.disabled = !confirmSaved.checked;
+      start.style.opacity = confirmSaved.checked ? '1' : '.5';
+    };
+    start.onclick = async function() {
+      if (!confirmSaved.checked || start.disabled) return;
+      if (preview) { overlay.remove(); return; }
+      start.disabled = true;
+      confirmSaved.disabled = true;
+      try {
+        await onStart();
+        overlay.remove();
+      } catch {
+        status.textContent = 'Unable to finish activation. Please try again.';
+        confirmSaved.disabled = false;
+        start.disabled = false;
+      }
+    };
+  },
+
   showPaymentPrompt: function() {
     const existing = document.getElementById('ttt-premium-overlay');
     if (existing) existing.remove();
