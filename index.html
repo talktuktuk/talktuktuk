@@ -1935,7 +1935,11 @@ if (p.id && p.id.indexOf('PRE-') === 0) {
         {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({fileName: p.id + '.mp4'})
+          body: JSON.stringify({
+  fileName: p.id + '.mp4',
+  recovery_code: localStorage.getItem('ttt_recovery_code'),
+  access_code: PremiumLicense.getStoredCode()
+})
         }
       );
 
