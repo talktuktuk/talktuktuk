@@ -194,49 +194,67 @@ const PremiumUI = {
     };
   },
 
-  showPaymentPrompt: function() {
+ showPaymentPrompt: function() {
     const existing = document.getElementById('ttt-premium-overlay');
     if (existing) existing.remove();
+
     const overlay = document.createElement('div');
     overlay.id = 'ttt-premium-overlay';
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9999;padding:12px;box-sizing:border-box;';
+
     const content = document.createElement('div');
     content.style.cssText = 'background:white;color:#333;border-radius:20px;padding:20px;max-width:400px;width:100%;max-height:100%;overflow-y:auto;text-align:center;box-sizing:border-box;';
+
     content.innerHTML = `
       <img src="NEW_TTT_LOGO.png" alt="Talk Tuk Tuk" style="width:85px;height:85px;object-fit:contain;border-radius:50%;">
-      <h2 style="font-family:Fredoka One,cursive;color:#1565C0;margin:8px 0;">Go Premium</h2>
+
+      <h2 style="font-family:Fredoka One,cursive;color:#1565C0;margin:8px 0;">Unlock Premium</h2>
+
       <div style="font-size:16px;font-weight:bold;">200 additional video phrases</div>
-      <div style="background:#FFF8DC;border-radius:12px;padding:12px;margin:12px 0;text-align:left;line-height:1.8;font-size:14px;">
-        ✓ Listen, learn and speak<br>
-        ✓ Fun interactive quizzes<br>
-        ✓ Download and learn offline<br>
-        ✓ Free future phrase updates<br>
-        ✓ Lifetime access<br>
-        ✓ No subscriptions or advertisements
-      </div>
-      <div style="font-size:32px;font-weight:bold;color:#1565C0;">$4.99</div>
-      <div style="font-size:13px;margin-bottom:15px;">One-time payment · USD</div>
+
+      <div style="font-size:32px;font-weight:bold;color:#1565C0;margin-top:8px;">$4.99</div>
+
+      <div style="font-size:13px;margin-bottom:15px;">One-time payment · Lifetime access</div>
+
       <div style="border:1px solid #ddd;border-radius:12px;padding:12px;text-align:left;font-size:13px;">
+
         <strong>Stay connected with Talk Tuk Tuk</strong>
+
         <p style="margin:6px 0 10px;">Be the first to hear about new phrases, app updates and exciting new features.</p>
+
         <input id="ttt-purchase-email" type="email" autocomplete="email" aria-label="Email address (optional)" placeholder="Enter your email address (optional)" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:16px;">
-        <label style="display:flex;align-items:flex-start;gap:8px;margin-top:10px;"><input id="ttt-marketing-consent" type="checkbox" style="width:18px;height:18px;flex-shrink:0;">I'd like to receive email updates.</label>
+
+        <label style="display:flex;align-items:flex-start;gap:8px;margin-top:10px;">
+          <input id="ttt-marketing-consent" type="checkbox" style="width:18px;height:18px;flex-shrink:0;">
+          I'd like to receive email updates.
+        </label>
+
         <div style="font-size:12px;color:#666;margin-top:6px;">No spam. Unsubscribe at any time.</div>
+
       </div>
-      <button type="button" id="ttt-buy-premium" style="width:100%;background:#FFD600;color:#1a1a2e;border:0;border-radius:30px;padding:14px;font-family:Fredoka One,cursive;font-size:18px;cursor:pointer;margin-top:14px;">Unlock Premium – $4.99</button>
+
+      <button type="button" id="ttt-buy-premium" style="width:100%;background:#FFD600;color:#1a1a2e;border:0;border-radius:30px;padding:14px;font-family:Fredoka One,cursive;font-size:18px;cursor:pointer;margin-top:14px;">Proceed to Payment – $4.99</button>
+
       <div id="ttt-purchase-message" role="status" style="font-size:13px;color:#555;margin-top:8px;">Payments coming soon</div>
-      <button type="button" onclick="PremiumUI.showAccessCodeBox()" style="background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;font-size:13px;">I have an access code</button>
+
       <button type="button" onclick="PremiumUI.showManageDevices()" style="width:100%;background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;">Restore Premium / Manage My Devices</button>
-      <button type="button" onclick="this.parentElement.parentElement.remove()" style="width:100%;background:#eee;color:#333;border:0;border-radius:30px;padding:12px;cursor:pointer;">Later</button>
+
+      <button type="button" onclick="PremiumUI.showAccessCodeBox()" style="width:100%;background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;font-size:13px;">I have a tester access code</button>
+
+      <button type="button" onclick="this.parentElement.parentElement.remove()" style="width:100%;background:#eee;color:#333;border:0;border-radius:30px;padding:12px;cursor:pointer;">Cancel</button>
     `;
+
     content.querySelector('#ttt-buy-premium').onclick = function() {
       content.querySelector('#ttt-purchase-message').textContent = 'Payments are not yet available. No payment has been taken.';
     };
+
     overlay.appendChild(content);
-    overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+    overlay.onclick = function(e) {
+      if (e.target === overlay) overlay.remove();
+    };
+
     document.body.appendChild(overlay);
   },
-
 
   /**
    * Show access code entry
