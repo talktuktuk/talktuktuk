@@ -1546,7 +1546,7 @@ if (premiumArea) {
   });
   if (kidsPlayer) kidsPlayer.pauseVideo();
 
-if (tab === 'premium' && PremiumLicense.isUnlocked()) {
+if (tab === 'premium' && PremiumLicense.isUnlocked() && new URLSearchParams(window.location.search).get('page') !== 'premium') {
   tab = 'phrases';
   setTimeout(function() {
     openPremiumCategories();
