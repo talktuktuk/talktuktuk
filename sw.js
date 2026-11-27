@@ -88,6 +88,12 @@ self.addEventListener('fetch', function (e) {
    var cache = await caches.open(CACHE);
 
 if (req.mode === 'navigate' && !self.navigator.onLine) {
+
+  var requestedPage = await cache.match(req);
+
+  if (requestedPage) {
+    return requestedPage;
+  }
   var offlinePage = await cache.match(
     self.location.origin + '/talktuktuk/'
   );
