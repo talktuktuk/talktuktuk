@@ -1557,8 +1557,9 @@ if (tab === 'premium' && PremiumLicense.isUnlocked()) {
 }
 var tabs = ['phrases','quiz','premium','about'];
   tabs.forEach(function(t) {
-    var panel = document.getElementById('panel-' + t);
-    if (panel) panel.classList.toggle('visible', t === tab);
+    document.querySelectorAll('[id="panel-' + t + '"]').forEach(function(panel) {
+  panel.classList.toggle('visible', t === tab);
+});
     var btn = document.getElementById('mtab-' + t);
     if (btn) btn.classList.toggle('active', t === tab);
   });
