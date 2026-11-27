@@ -1,6 +1,7 @@
 /**
  * TALK TUK TUK PREMIUM LICENSE SYSTEM
  * Supabase-powered single Premium unlock
+ * Two-device licence preparation
  */
 
 const PremiumLicense = {
@@ -10,6 +11,42 @@ const PremiumLicense = {
   storageKey: 'ttt_premium_unlocked',
 
   codeStorageKey: 'ttt_premium_code',
+
+  deviceStorageKey: 'ttt_device_id',
+
+  getDeviceId: function() {
+
+    let deviceId = localStorage.getItem(
+      this.deviceStorageKey
+    );
+
+    if (!deviceId) {
+
+      deviceId = crypto.randomUUID();
+
+      localStorage.setItem(
+        this.deviceStorageKey,
+        deviceId
+      );
+
+    }
+
+    return deviceId;
+  },
+
+  getDeviceName: function() {
+
+    const ua = navigator.userAgent;
+
+    if (/iPad/i.test(ua)) return 'iPad';
+    if (/iPhone/i.test(ua)) return 'iPhone';
+    if (/Android/i.test(ua)) return 'Android device';
+    if (/Windows/i.test(ua)) return 'Windows computer';
+    if (/Macintosh/i.test(ua)) return 'Mac computer';
+    if (/Linux/i.test(ua)) return 'Linux computer';
+
+    return 'Other device';
+  },
 
   isEnabled: function() {
     return true;
@@ -36,14 +73,15 @@ const PremiumLicense = {
 
     try {
 
-      const { data, error } = await supabaseClient.functions.invoke(
-  'verify-access-code',
-  {
-    body: {
-      access_code: code
-    }
-  }
-);
+      const { data, error } =
+        await supabaseClient.functions.invoke(
+          'verify-access-code',
+          {
+            body: {
+              access_code: code
+            }
+          }
+        );
 
       if (error) {
 
@@ -69,8 +107,7 @@ const PremiumLicense = {
       window.dispatchEvent(
         new CustomEvent('premiumUpdated', {
           detail: {
-            action: 'unlocked',
-            accessCode: code
+            action: 'unlocked'
           }
         })
       );
@@ -90,13 +127,15 @@ const PremiumLicense = {
       };
     }
   },
-restoreWithRecoveryCode: async function(recoveryCode) {
+
+  restoreWithRecoveryCode: async function(recoveryCode) {
 
     const code = String(recoveryCode || '')
-  .toUpperCase()
-  .replace(/[\s-]/g, '');
+      .toUpperCase()
+      .replace(/[\s-]/g, '');
 
-if (!/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(code)) {
+    if (!/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(code)) {
+
       return {
         success: false,
         message: 'Please enter a valid recovery code.'
@@ -105,19 +144,49 @@ if (!/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(code)) {
 
     try {
 
-      const { data, error } = await supabaseClient.functions.invoke(
-        'verify-premium',
-        {
-          body: {
-            recovery_code: code
+      const { data, error } =
+        await supabaseClient.functions.invoke(
+          'verify-premium',
+          {
+            body: {
+              recovery_code: code,
+              device_id: this.getDeviceId(),
+              device_name: this.getDeviceName()
+            }
           }
-        }
-      );
+        );
 
-      if (error || !data || !data.success || !data.premium_active) {
+      let response = data;
+
+      if (error && error.context instanceof Response) {
+
+        try {
+          response = await error.context.json();
+        } catch {
+          response = null;
+        }
+      }
+
+      if (response && response.device_limit_reached) {
+
         return {
           success: false,
-          message: 'Unable to restore Premium. Check your recovery code and internet connection.'
+          device_limit_reached: true,
+          message: 'Your Premium purchase allows two active devices. Your device limit has been reached.'
+        };
+      }
+
+      if (
+        error ||
+        !response ||
+        !response.success ||
+        !response.premium_active
+      ) {
+
+        return {
+          success: false,
+          message: response?.message ||
+            'Unable to restore Premium. Check your recovery code and internet connection.'
         };
       }
 
@@ -143,9 +212,9 @@ if (!/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(code)) {
         success: false,
         message: 'Unable to connect. Please try again.'
       };
-
     }
   },
+
   hasAccess: function() {
     return this.isUnlocked();
   },
@@ -191,7 +260,6 @@ if (!/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(code)) {
         success: true,
         message: 'Premium is already unlocked on this device.'
       };
-
     }
 
     return {
@@ -213,6 +281,7 @@ if (!/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(code)) {
 
     localStorage.removeItem(this.storageKey);
     localStorage.removeItem(this.codeStorageKey);
+    localStorage.removeItem('ttt_recovery_code');
 
     window.dispatchEvent(
       new CustomEvent('premiumUpdated', {
