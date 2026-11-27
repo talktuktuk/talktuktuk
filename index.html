@@ -3040,5 +3040,12 @@ async function updateTesterAccessCode() {
 
 }
 </script>
+  <script>
+window.addEventListener('load', function () {
+  if (new URLSearchParams(window.location.search).get('page') === 'premium') {
+    showMain('premium');
+  }
+});
+</script>
 </body>
 </html>
