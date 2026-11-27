@@ -2544,8 +2544,10 @@ if (existing && (savedVersion || version === 1)) {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            fileName: p.id + '.mp4'
-          })
+  fileName: p.id + '.mp4',
+  recovery_code: localStorage.getItem('ttt_recovery_code'),
+  access_code: PremiumLicense.getStoredCode()
+})
         }
       );
 
