@@ -214,7 +214,7 @@ const PremiumUI = {
 
       <div style="font-size:32px;font-weight:bold;color:#1565C0;margin-top:8px;">$4.99</div>
 
-      <div style="font-size:13px;margin-bottom:15px;">One-time payment · Lifetime access</div>
+      <div style="font-size:13px;margin-bottom:15px;">USD · One-time payment · Lifetime access</div>
 
       <div style="border:1px solid #ddd;border-radius:12px;padding:12px;text-align:left;font-size:13px;">
 
