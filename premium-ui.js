@@ -9,6 +9,113 @@ const PremiumUI = {
   /**
    * Show Premium unlock screen
    */
+  showManageDevices: function(initialCode = '') {
+    const existing = document.getElementById('ttt-premium-overlay');
+    if (existing) existing.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'ttt-premium-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9999;padding:12px;box-sizing:border-box;';
+    const content = document.createElement('div');
+    content.style.cssText = 'background:white;color:#333;border-radius:20px;padding:20px;max-width:400px;width:100%;max-height:100%;overflow-y:auto;text-align:center;box-sizing:border-box;';
+    content.innerHTML = `
+      <img src="NEW_TTT_LOGO.png" alt="Talk Tuk Tuk" style="width:85px;height:85px;object-fit:contain;">
+      <h2 style="color:#1565C0;">Manage My Devices</h2>
+      <p>Use your recovery code to manage up to two devices.</p>
+      <input type="password" autocomplete="off" aria-label="Recovery code" placeholder="Enter recovery code" style="width:100%;box-sizing:border-box;padding:12px;font-size:16px;border:1px solid #ccc;border-radius:8px;">
+      <button type="button" data-action="list" style="width:100%;padding:12px;margin:10px 0;background:#FFD600;color:#222;border:0;border-radius:20px;">Show My Devices</button>
+      <div role="status" style="font-size:14px;margin:8px 0;"></div>
+      <div data-devices></div>
+      <button type="button" data-action="restore" hidden style="width:100%;padding:12px;margin:10px 0;background:#174B32;color:white;border:0;border-radius:20px;">Activate This Device</button>
+      <button type="button" data-action="close" style="width:100%;padding:12px;margin-top:10px;background:#eee;color:#333;border:0;border-radius:20px;">Back to Talk Tuk Tuk</button>`;
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
+    const input = content.querySelector('input');
+    const status = content.querySelector('[role="status"]');
+    const list = content.querySelector('[data-devices]');
+    const show = content.querySelector('[data-action="list"]');
+    const restore = content.querySelector('[data-action="restore"]');
+    const close = content.querySelector('[data-action="close"]');
+    input.value = initialCode || PremiumLicense.getRecoveryCode() || '';
+    let busy = false;
+    let verifiedCode = '';
+    let currentRemoved = false;
+    function setBusy(value) {
+      busy = value;
+      input.disabled = value;
+      show.disabled = value;
+      restore.disabled = value;
+      list.querySelectorAll('button').forEach(b => b.disabled = value);
+    }
+    function finish() {
+      if (busy) return;
+      overlay.remove();
+      if (currentRemoved) location.reload();
+    }
+    close.onclick = finish;
+    input.oninput = function() {
+      verifiedCode = '';
+      list.replaceChildren();
+      restore.hidden = true;
+      status.textContent = '';
+    };
+    async function loadDevices(code) {
+      list.replaceChildren();
+      restore.hidden = true;
+      verifiedCode = '';
+      status.textContent = 'Checking devices...';
+      const result = await PremiumLicense.listDevices(code);
+      if (!result.success) {
+        status.textContent = result.message;
+        return;
+      }
+      verifiedCode = code;
+      const devices = Array.isArray(result.devices) ? result.devices : [];
+      const currentId = PremiumLicense.getDeviceId().toLowerCase();
+      status.textContent = devices.length + ' of 2 devices registered';
+      devices.forEach(device => {
+        const row = document.createElement('div');
+        row.style.cssText = 'border:1px solid #ddd;border-radius:12px;padding:12px;margin:8px 0;text-align:left;';
+        const name = document.createElement('strong');
+        name.textContent = device.device_name || 'Unknown device';
+        const detail = document.createElement('p');
+        const current = device.device_id === currentId;
+        detail.textContent = current ? 'This device' : 'Registered device';
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.textContent = 'Remove device';
+        remove.style.cssText = 'padding:8px;color:#b71c1c;background:#fff;border:1px solid #b71c1c;border-radius:8px;';
+        remove.onclick = async function() {
+          if (busy || !confirm('Remove ' + name.textContent + '? You can activate a replacement for free.')) return;
+          setBusy(true);
+          try {
+            const removed = await PremiumLicense.removeDevice(code, device.device_id);
+            if (!removed.success) { status.textContent = removed.message; return; }
+            if (current && !PremiumLicense.isUnlocked()) currentRemoved = true;
+            await loadDevices(code);
+          } finally { setBusy(false); }
+        };
+        row.append(name, detail, remove);
+        list.appendChild(row);
+      });
+      restore.hidden = devices.length >= 2 && !devices.some(d => d.device_id === currentId);
+    }
+    show.onclick = async function() {
+      if (busy) return;
+      setBusy(true);
+      try { await loadDevices(PremiumLicense.normalizeRecoveryCode(input.value)); }
+      finally { setBusy(false); }
+    };
+    restore.onclick = async function() {
+      if (busy || !verifiedCode) return;
+      setBusy(true);
+      try {
+        const result = await PremiumLicense.restoreWithRecoveryCode(verifiedCode);
+        if (result.success) { location.reload(); return; }
+        status.textContent = result.message;
+      } finally { setBusy(false); }
+    };
+  },
+
   showPaymentPrompt: function() {
     const existing = document.getElementById('ttt-premium-overlay');
     if (existing) existing.remove();
@@ -41,6 +148,7 @@ const PremiumUI = {
       <button type="button" id="ttt-buy-premium" style="width:100%;background:#FFD600;color:#1a1a2e;border:0;border-radius:30px;padding:14px;font-family:Fredoka One,cursive;font-size:18px;cursor:pointer;margin-top:14px;">Unlock Premium – $4.99</button>
       <div id="ttt-purchase-message" role="status" style="font-size:13px;color:#555;margin-top:8px;">Payments coming soon</div>
       <button type="button" onclick="PremiumUI.showAccessCodeBox()" style="background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;font-size:13px;">I have an access code</button>
+      <button type="button" onclick="PremiumUI.showManageDevices()" style="width:100%;background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;">Restore Premium / Manage My Devices</button>
       <button type="button" onclick="this.parentElement.parentElement.remove()" style="width:100%;background:#eee;color:#333;border:0;border-radius:30px;padding:12px;cursor:pointer;">Later</button>
     `;
     content.querySelector('#ttt-buy-premium').onclick = function() {
@@ -110,7 +218,7 @@ const PremiumUI = {
         color:#666;
         margin-bottom:18px;
       ">
-        Enter the Premium access code you received after payment.
+        Enter your tester access code. For a paid Premium purchase, use your recovery code.
       </div>
 
       <input
@@ -373,7 +481,7 @@ const PremiumUI = {
    */
   onPremiumUpdated: function(event) {
 
-    console.log('🎉 Premium updated!', event.detail);
+    // Refresh the app after a licence change.
 
     location.reload();
   }
