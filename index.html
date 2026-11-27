@@ -1126,6 +1126,15 @@ function catLabelsPremium(cat) {
   </button>
 
 </div>
+      <div style="text-align:center;margin:12px 0 20px;">
+
+  <button
+    onclick="updateTesterAccessCode()"
+    style="background:#444;color:white;border:none;border-radius:8px;padding:10px 18px;cursor:pointer;">
+    Update Access Code
+  </button>
+
+</div>
       <div class="giving-badge">
         <span class="pct">20%</span>
         of app profits go directly to Cambodian charities
@@ -2966,6 +2975,30 @@ async function restorePremiumAccess() {
   }
 
   const result = await PremiumLicense.restoreWithRecoveryCode(code);
+
+  alert(result.message);
+
+  if (result.success) {
+    window.location.reload();
+  }
+
+}
+</script>
+  <script>
+async function updateTesterAccessCode() {
+
+  const code = prompt(
+    'Enter your new Talk Tuk Tuk access code:'
+  );
+
+  if (code === null) return;
+
+  if (!code.trim()) {
+    alert('Please enter your access code.');
+    return;
+  }
+
+  const result = await PremiumLicense.verifyCode(code);
 
   alert(result.message);
 
