@@ -10,9 +10,12 @@ self.addEventListener('install', function (e) {
       var cache = await caches.open(CACHE);
 
       await cache.addAll([
-        './FredokaOne-Regular.ttf',
-        './Nunito%5Bwght%5D.ttf'
-      ]);
+  './FredokaOne-Regular.ttf',
+  './Nunito%5Bwght%5D.ttf',
+  './privacy.html',
+  './terms.html',
+  './refund.html'
+]);
 
       await self.skipWaiting();
     })()
