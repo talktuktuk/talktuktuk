@@ -92,9 +92,11 @@ const PremiumLicense = {
   },
 restoreWithRecoveryCode: async function(recoveryCode) {
 
-    const code = String(recoveryCode || '').trim().toLowerCase();
+    const code = String(recoveryCode || '')
+  .toUpperCase()
+  .replace(/[\s-]/g, '');
 
-    if (!/^[a-f0-9]{64}$/.test(code)) {
+if (!/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(code)) {
       return {
         success: false,
         message: 'Please enter a valid recovery code.'
