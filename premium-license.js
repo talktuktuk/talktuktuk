@@ -88,7 +88,60 @@ const PremiumLicense = {
       };
     }
   },
+restoreWithRecoveryCode: async function(recoveryCode) {
 
+    const code = String(recoveryCode || '').trim().toLowerCase();
+
+    if (!/^[a-f0-9]{64}$/.test(code)) {
+      return {
+        success: false,
+        message: 'Please enter a valid recovery code.'
+      };
+    }
+
+    try {
+
+      const { data, error } = await supabaseClient.functions.invoke(
+        'verify-premium',
+        {
+          body: {
+            recovery_code: code
+          }
+        }
+      );
+
+      if (error || !data || !data.success || !data.premium_active) {
+        return {
+          success: false,
+          message: 'Unable to restore Premium. Check your recovery code and internet connection.'
+        };
+      }
+
+      localStorage.setItem(this.storageKey, 'true');
+      localStorage.setItem('ttt_recovery_code', code);
+
+      window.dispatchEvent(
+        new CustomEvent('premiumUpdated', {
+          detail: {
+            action: 'unlocked'
+          }
+        })
+      );
+
+      return {
+        success: true,
+        message: 'Premium restored successfully!'
+      };
+
+    } catch (err) {
+
+      return {
+        success: false,
+        message: 'Unable to connect. Please try again.'
+      };
+
+    }
+  },
   hasAccess: function() {
     return this.isUnlocked();
   },
