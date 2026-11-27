@@ -1946,10 +1946,11 @@ if (p.id && Object.values(premiumPhrases).flat().some(function(phrase) {
         {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
+         body: JSON.stringify({
   fileName: p.id + '.mp4',
   recovery_code: localStorage.getItem('ttt_recovery_code'),
-  access_code: PremiumLicense.getStoredCode()
+  access_code: PremiumLicense.getStoredCode(),
+  device_id: PremiumLicense.getDeviceId()
 })
         }
       );
