@@ -2943,5 +2943,29 @@ if (new URLSearchParams(window.location.search).get('from') === 'karma') {
 }
 </script>
   <script src="download-button.js"></script>
+  <script>
+async function restorePremiumAccess() {
+
+  const code = prompt(
+    'Enter your Talk Tuk Tuk Premium recovery code:'
+  );
+
+  if (code === null) return;
+
+  if (!code.trim()) {
+    alert('Please enter your recovery code.');
+    return;
+  }
+
+  const result = await PremiumLicense.restoreWithRecoveryCode(code);
+
+  alert(result.message);
+
+  if (result.success) {
+    window.location.reload();
+  }
+
+}
+</script>
 </body>
 </html>
