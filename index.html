@@ -1911,7 +1911,9 @@ async function openPhrase(p) {
 
   var video = document.getElementById('phrase-video');
 
-if (p.id && p.id.indexOf('PRE-') === 0) {
+if (p.id && Object.values(premiumPhrases).flat().some(function(phrase) {
+  return phrase.id === p.id;
+})) {
 
   var premiumCacheURL =
     location.origin + '/premium-offline/' + p.id + '.mp4';
