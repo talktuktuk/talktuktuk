@@ -5,7 +5,18 @@ const VIDEO_BASE =
   'https://raw.githubusercontent.com/Mickalacki/talktuktuk/main/';
 
 self.addEventListener('install', function (e) {
-  e.waitUntil(self.skipWaiting());
+  e.waitUntil(
+    (async function () {
+      var cache = await caches.open(CACHE);
+
+      await cache.addAll([
+        './FredokaOne-Regular.ttf',
+        './Nunito%5Bwght%5D.ttf'
+      ]);
+
+      await self.skipWaiting();
+    })()
+  );
 });
 
 self.addEventListener('activate', function (e) {
