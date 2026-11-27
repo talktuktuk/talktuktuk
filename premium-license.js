@@ -36,12 +36,14 @@ const PremiumLicense = {
 
     try {
 
-      const { data, error } = await supabaseClient
-        .from('premium_access')
-        .select('access_code, premium')
-        .eq('access_code', code)
-        .eq('premium', true)
-        .maybeSingle();
+      const { data, error } = await supabaseClient.functions.invoke(
+  'verify-access-code',
+  {
+    body: {
+      access_code: code
+    }
+  }
+);
 
       if (error) {
 
@@ -53,7 +55,7 @@ const PremiumLicense = {
         };
       }
 
-      if (!data) {
+      if (!data || !data.success || !data.premium_active) {
 
         return {
           success: false,
