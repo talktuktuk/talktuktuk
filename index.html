@@ -2672,7 +2672,13 @@ function initApp(source) {
   document.getElementById('loading-screen').style.display = 'none';
   updateCategoryCounts();
   checkFreeOffline();
-  document.getElementById('lang-overlay').style.display = 'flex';
+
+  if (new URLSearchParams(window.location.search).get('page') === 'premium') {
+    setLang('khmer');
+    showMain('premium');
+  } else {
+    document.getElementById('lang-overlay').style.display = 'flex';
+  }
 }
 
 function updateCategoryCounts() {
