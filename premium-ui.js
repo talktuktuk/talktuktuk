@@ -236,7 +236,19 @@ const PremiumUI = {
       <button type="button" id="ttt-buy-premium" style="width:100%;background:#FFD600;color:#1a1a2e;border:0;border-radius:30px;padding:14px;font-family:Fredoka One,cursive;font-size:18px;cursor:pointer;margin-top:14px;">Proceed to Payment – $4.99</button>
 
       <div id="ttt-purchase-message" role="status" style="font-size:13px;color:#555;margin-top:8px;">Payments coming soon</div>
+<div style="text-align:center;font-size:11px;line-height:1.8;margin:12px 0;">
 
+  <a href="privacy.html" target="_blank" rel="noopener" style="color:#1565C0;">Privacy Policy</a>
+
+  <span style="color:#999;"> | </span>
+
+  <a href="terms.html" target="_blank" rel="noopener" style="color:#1565C0;">Terms &amp; Conditions</a>
+
+  <span style="color:#999;"> | </span>
+
+  <a href="refund.html" target="_blank" rel="noopener" style="color:#1565C0;">Refund Policy</a>
+
+</div>
       <button type="button" onclick="PremiumUI.showManageDevices()" style="width:100%;background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;">Restore Premium / Manage My Devices</button>
 
 
