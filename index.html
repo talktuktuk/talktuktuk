@@ -1795,6 +1795,10 @@ function startCountdown(type, callback) {
 window.learningLang = 'khmer'; // default
 
 function setLang(lang) {
+  var premiumArea = document.getElementById('premium-area');
+  if (premiumArea) {
+    premiumArea.style.display = PremiumLicense.isUnlocked() ? 'none' : 'block';
+  }
   window.learningLang = lang;
   document.getElementById('lang-overlay').style.display = 'none';
   var flag = document.getElementById('lang-flag');
