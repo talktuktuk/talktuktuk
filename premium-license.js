@@ -1,7 +1,7 @@
 /**
  * TALK TUK TUK PREMIUM LICENSE SYSTEM
  * Supabase-powered single Premium unlock
- * Two-device licence preparation
+ * Two-device licence and device management
  */
 
 const PremiumLicense = {
@@ -60,6 +60,18 @@ const PremiumLicense = {
     return localStorage.getItem(this.codeStorageKey);
   },
 
+  getRecoveryCode: function() {
+    return localStorage.getItem('ttt_recovery_code');
+  },
+
+  normalizeRecoveryCode: function(recoveryCode) {
+
+    return String(recoveryCode || '')
+      .toUpperCase()
+      .replace(/[\s-]/g, '');
+
+  },
+
   verifyCode: async function(accessCode) {
 
     if (!accessCode) {
@@ -103,6 +115,7 @@ const PremiumLicense = {
 
       localStorage.setItem(this.storageKey, 'true');
       localStorage.setItem(this.codeStorageKey, code);
+      localStorage.removeItem('ttt_recovery_code');
 
       window.dispatchEvent(
         new CustomEvent('premiumUpdated', {
@@ -130,9 +143,7 @@ const PremiumLicense = {
 
   restoreWithRecoveryCode: async function(recoveryCode) {
 
-    const code = String(recoveryCode || '')
-      .toUpperCase()
-      .replace(/[\s-]/g, '');
+    const code = this.normalizeRecoveryCode(recoveryCode);
 
     if (!/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(code)) {
 
@@ -172,7 +183,7 @@ const PremiumLicense = {
         return {
           success: false,
           device_limit_reached: true,
-          message: 'Your Premium purchase allows two active devices. Your device limit has been reached.'
+          message: 'Your Premium purchase allows two active devices. Remove an old device to activate this one.'
         };
       }
 
@@ -192,6 +203,7 @@ const PremiumLicense = {
 
       localStorage.setItem(this.storageKey, 'true');
       localStorage.setItem('ttt_recovery_code', code);
+      localStorage.removeItem(this.codeStorageKey);
 
       window.dispatchEvent(
         new CustomEvent('premiumUpdated', {
@@ -214,6 +226,128 @@ const PremiumLicense = {
       };
     }
   },
+
+  // ===== DEVICE MANAGEMENT =====
+
+  manageDevices: async function(
+    action,
+    recoveryCode,
+    deviceId = null
+  ) {
+
+    const code = this.normalizeRecoveryCode(recoveryCode);
+
+    if (!/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(code)) {
+
+      return {
+        success: false,
+        message: 'Please enter a valid recovery code.'
+      };
+    }
+
+    if (action !== 'list' && action !== 'remove') {
+
+      return {
+        success: false,
+        message: 'Invalid device management action.'
+      };
+    }
+
+    try {
+
+      const body = {
+        action: action,
+        recovery_code: code
+      };
+
+      if (action === 'remove') {
+
+        if (
+          typeof deviceId !== 'string' ||
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(deviceId)
+        ) {
+
+          return {
+            success: false,
+            message: 'Invalid device identifier.'
+          };
+        }
+
+        body.device_id = deviceId.toLowerCase();
+      }
+
+      const { data, error } =
+        await supabaseClient.functions.invoke(
+          'manage-premium-devices',
+          {
+            body: body
+          }
+        );
+
+      let response = data;
+
+      if (error && error.context instanceof Response) {
+
+        try {
+          response = await error.context.json();
+        } catch {
+          response = null;
+        }
+      }
+
+      if (error || !response || !response.success) {
+
+        return {
+          success: false,
+          message: response?.message ||
+            'Unable to manage devices. Please try again.'
+        };
+      }
+
+      return response;
+
+    } catch (err) {
+
+      return {
+        success: false,
+        message: 'Unable to connect. Please check your internet connection.'
+      };
+    }
+  },
+
+  listDevices: async function(recoveryCode) {
+
+    return await this.manageDevices(
+      'list',
+      recoveryCode
+    );
+  },
+
+  removeDevice: async function(recoveryCode, deviceId) {
+
+    const result = await this.manageDevices(
+      'remove',
+      recoveryCode,
+      deviceId
+    );
+
+    if (
+      result.success &&
+      deviceId.toLowerCase() === this.getDeviceId().toLowerCase() &&
+      this.normalizeRecoveryCode(this.getRecoveryCode()) ===
+        this.normalizeRecoveryCode(recoveryCode)
+    ) {
+
+      localStorage.removeItem(this.storageKey);
+      localStorage.removeItem(this.codeStorageKey);
+      localStorage.removeItem('ttt_recovery_code');
+
+    }
+
+    return result;
+  },
+
+  // ===== EXISTING PREMIUM FEATURES =====
 
   hasAccess: function() {
     return this.isUnlocked();
@@ -264,7 +398,7 @@ const PremiumLicense = {
 
     return {
       success: false,
-      message: 'Please enter your Premium access code.'
+      message: 'Please enter your Premium recovery code.'
     };
   },
 
