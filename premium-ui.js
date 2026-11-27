@@ -239,7 +239,6 @@ const PremiumUI = {
 
       <button type="button" onclick="PremiumUI.showManageDevices()" style="width:100%;background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;">Restore Premium / Manage My Devices</button>
 
-      <button type="button" onclick="PremiumUI.showAccessCodeBox()" style="width:100%;background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;font-size:13px;">I have a tester access code</button>
 
       <button type="button" onclick="this.parentElement.parentElement.remove()" style="width:100%;background:#eee;color:#333;border:0;border-radius:30px;padding:12px;cursor:pointer;">Cancel</button>
     `;
