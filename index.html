@@ -2673,8 +2673,8 @@ status.textContent = '✓ All 200 Premium phrases available offline';
 failedIDs.join(', ') + '. Error: ' + firstError;
       }
 }
-  async function initApp(source) {
-  await PremiumLicense.revalidateDevice();
+  function initApp(source) {
+  PremiumLicense.revalidateDevice().catch(console.error);
   document.getElementById('loading-screen').style.display = 'none';
   updateCategoryCounts();
   checkFreeOffline();
