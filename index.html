@@ -882,7 +882,20 @@ function openPremiumCategory(cat) {
             justify-content:center;
           "
         >
-        ${getPremiumIcon(cat)}
+        ${cat === 'shopping' ? ({
+  red: '🔴',
+  pink: '🩷',
+  green: '🟢',
+  white: '⚪',
+  brown: '🟤',
+  black: '⚫',
+  blue: '🔵',
+  yellow: '🟡',
+  orange: '🟠',
+  purple: '🟣',
+  grey: '🩶',
+  gray: '🩶'
+}[p.english.trim().toLowerCase()] || getPremiumIcon(cat)) : getPremiumIcon(cat)}
         </div>
 
         <div>
