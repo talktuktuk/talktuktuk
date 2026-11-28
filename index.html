@@ -895,7 +895,46 @@ function openPremiumCategory(cat) {
   purple: '🟣',
   grey: '🩶',
   gray: '🩶'
-}[p.english.trim().toLowerCase()] || getPremiumIcon(cat)) : getPremiumIcon(cat)}
+}[p.english.trim().toLowerCase()] || getPremiumIcon(cat)) :
+cat === 'bar' ? (function() {
+  var balls = {
+    'you break': 1,
+    'unlucky': 2,
+    'play you?': 3,
+    'nice shot!': 4,
+    'lucky you': 5,
+    'one more game?': 6,
+    'play for a beer?': 7,
+    'best of three?': 8,
+    'good player': 9,
+    'foul shot!': 10
+  };
+
+  var n = balls[p.english.trim().toLowerCase()];
+
+  if (!n) return getPremiumIcon(cat);
+
+  var colors = [
+    '#EAB308', '#2563EB', '#DC2626',
+    '#9333EA', '#F97316', '#15803D',
+    '#881337', '#111111', '#EAB308',
+    '#2563EB'
+  ];
+
+  var color = colors[n - 1];
+
+  var bg = n > 8
+    ? 'linear-gradient(white 25%, ' + color +
+      ' 25%, ' + color + ' 75%, white 75%)'
+    : color;
+
+  return '<span style="display:inline-flex;width:38px;height:38px;border-radius:50%;background:' +
+    bg +
+    ';align-items:center;justify-content:center;box-shadow:inset -2px -3px 5px #0005;">' +
+    '<span style="display:flex;width:21px;height:21px;border-radius:50%;background:white;color:black;font-size:13px;font-weight:bold;align-items:center;justify-content:center;">' +
+    n + '</span></span>';
+
+})() : getPremiumIcon(cat)}
         </div>
 
         <div>
