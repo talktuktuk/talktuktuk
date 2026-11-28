@@ -2239,7 +2239,8 @@ function loadPremiumPhrases() {
           id: row.PhraseID.trim(),
           english: row.English.trim(),
           khmer: (row.Khmer || '').trim(),
-          phonetic: (row.KhmerPhonetic || '').trim()
+          phonetic: (row.KhmerPhonetic || '').trim(),
+icon: (row.Icon || '').trim()
         });
 
       });
