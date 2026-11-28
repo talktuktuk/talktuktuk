@@ -882,21 +882,9 @@ function openPremiumCategory(cat) {
             justify-content:center;
           "
         >
-        ${cat === 'shopping' ? ({
-  red: '🔴',
-  pink: '🩷',
-  green: '🟢',
-  white: '⚪',
-  brown: '🟤',
-  black: '⚫',
-  blue: '🔵',
-  yellow: '🟡',
-  orange: '🟠',
-  purple: '🟣',
-  grey: '🩶',
-  gray: '🩶'
-}[p.english.trim().toLowerCase()] || getPremiumIcon(cat)) :
-cat === 'bar' ? (function() {
+       ${(function() {
+  var icon = (p.icon || '').trim();
+
   var balls = {
     'you break': 1,
     'unlucky': 2,
@@ -910,31 +898,64 @@ cat === 'bar' ? (function() {
     'foul shot!': 10
   };
 
-  var n = balls[p.english.trim().toLowerCase()];
+  var n = /^pool([1-9]|10)$/.test(icon)
+    ? Number(icon.slice(4))
+    : 0;
 
-  if (!n) return getPremiumIcon(cat);
+  if (!icon && cat === 'bar') {
+    n = balls[p.english.trim().toLowerCase()];
+  }
 
-  var colors = [
-    '#EAB308', '#2563EB', '#DC2626',
-    '#9333EA', '#F97316', '#15803D',
-    '#881337', '#111111', '#EAB308',
-    '#2563EB'
-  ];
+  if (n) {
+    var colors = [
+      '#EAB308', '#2563EB', '#DC2626',
+      '#9333EA', '#F97316', '#15803D',
+      '#881337', '#111111', '#EAB308',
+      '#2563EB'
+    ];
 
-  var color = colors[n - 1];
+    var color = colors[n - 1];
 
-  var bg = n > 8
-    ? 'linear-gradient(white 25%, ' + color +
-      ' 25%, ' + color + ' 75%, white 75%)'
-    : color;
+    var bg = n > 8
+      ? 'linear-gradient(white 25%, ' + color +
+        ' 25%, ' + color + ' 75%, white 75%)'
+      : color;
 
-  return '<span style="display:inline-flex;width:38px;height:38px;border-radius:50%;background:' +
-    bg +
-    ';align-items:center;justify-content:center;box-shadow:inset -2px -3px 5px #0005;">' +
-    '<span style="display:flex;width:21px;height:21px;border-radius:50%;background:white;color:black;font-size:13px;font-weight:bold;align-items:center;justify-content:center;">' +
-    n + '</span></span>';
+    return '<span style="display:inline-flex;width:38px;height:38px;border-radius:50%;background:' +
+      bg +
+      ';align-items:center;justify-content:center;box-shadow:inset -2px -3px 5px #0005;">' +
+      '<span style="display:flex;width:21px;height:21px;border-radius:50%;background:white;color:black;font-size:13px;font-weight:bold;align-items:center;justify-content:center;">' +
+      n + '</span></span>';
+  }
 
-})() : getPremiumIcon(cat)}
+  if (icon) {
+    return icon.replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  if (cat === 'shopping') {
+    var colours = {
+      red: '🔴',
+      pink: '🩷',
+      green: '🟢',
+      white: '⚪',
+      brown: '🟤',
+      black: '⚫',
+      blue: '🔵',
+      yellow: '🟡',
+      orange: '🟠',
+      purple: '🟣',
+      grey: '🩶',
+      gray: '🩶'
+    };
+
+    return colours[p.english.trim().toLowerCase()]
+      || getPremiumIcon(cat);
+  }
+
+  return getPremiumIcon(cat);
+})()}
         </div>
 
         <div>
