@@ -1,12 +1,16 @@
 /**
  * TALK TUK TUK PREMIUM LICENSE SYSTEM
- * Supabase-powered single Premium unlock
- * Two-device licence and device management
+ * Individual and Duo licences and device management
  */
 
 const PremiumLicense = {
 
   price: '$4.99',
+
+  plans: {
+    individual: { price: '$4.99', device_limit: 1 },
+    duo: { price: '$7.99', device_limit: 2 }
+  },
 
   storageKey: 'ttt_premium_unlocked',
 
@@ -183,7 +187,9 @@ const PremiumLicense = {
         return {
           success: false,
           device_limit_reached: true,
-          message: 'Your Premium purchase allows two active devices. Remove an old device to activate this one.'
+          device_limit: response.device_limit,
+          message: response.message ||
+            'Your Premium device limit has been reached. Remove an old device to activate this one.'
         };
       }
 
@@ -215,6 +221,7 @@ const PremiumLicense = {
 
       return {
         success: true,
+        device_limit: response.device_limit,
         message: 'Premium restored successfully!'
       };
 
