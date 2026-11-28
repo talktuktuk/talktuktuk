@@ -234,6 +234,35 @@ const PremiumLicense = {
     }
   },
 
+ revalidateDevice: async function() {
+
+    if (!this.isUnlocked() || !navigator.onLine) {
+      return;
+    }
+
+    const code = this.getRecoveryCode();
+
+    if (!code) {
+      return;
+    }
+
+    const result = await this.listDevices(code);
+
+    if (!result.success || !Array.isArray(result.devices)) {
+      return;
+    }
+
+    const currentId = this.getDeviceId().toLowerCase();
+
+    const registered = result.devices.some(
+      device => device.device_id.toLowerCase() === currentId
+    );
+
+    if (!registered) {
+      this.clearAccess();
+    }
+  },
+
   // ===== DEVICE MANAGEMENT =====
 
   manageDevices: async function(
