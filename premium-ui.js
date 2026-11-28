@@ -431,9 +431,8 @@ const PremiumUI = {
         <a href="refund.html" target="_blank" rel="noopener" style="color:#1565C0;">Refund Policy</a>
 
       </div>
-
-      <button type="button" onclick="PremiumUI.showManageDevices()" style="width:100%;background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;">Restore Premium / Manage My Devices</button>
-
+<button type="button" onclick="PremiumUI.showManageDevices()" style="width:100%;background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;">Restore Premium / Manage My Devices</button>
+<button type="button" onclick="PremiumUI.showAccessCodeBox()" style="width:100%;background:none;border:0;color:#1565C0;padding:10px;cursor:pointer;">Beta Tester Access</button>
       <button type="button" onclick="this.parentElement.parentElement.remove()" style="width:100%;background:#eee;color:#333;border:0;border-radius:30px;padding:12px;cursor:pointer;">Cancel</button>
     `;
 
